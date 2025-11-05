@@ -16,7 +16,7 @@ export function useAuth(type: "login" | "register") {
   const isLogin = type === "login";
   const formSchema = isLogin ? loginSchema : registerSchema;
 
-  const form = useForm({
+  const form = useForm<LoginRequest | RegisterRequest>({
     resolver: zodResolver(formSchema),
     defaultValues: isLogin 
       ? { email: "", password: "" }

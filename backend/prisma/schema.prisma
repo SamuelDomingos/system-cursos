@@ -7,18 +7,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model User {
-  id          Int           @id @default(autoincrement())
-  email       String        @unique
-  name        String
-  password    String
-  role        Role          @default(STUDENT)
-  enrollments Enrollment[]
-  progresses  Progress[]
-  courses     Course[]      @relation("InstructorCourses")
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id                   Int           @id @default(autoincrement())
+  email                String        @unique
+  name                 String
+  password             String
+  role                 Role          @default(STUDENT)
+  enrollments          Enrollment[]
+  progresses           Progress[]
+  courses              Course[]      @relation("InstructorCourses")
+  sentFriendRequests   Friendship[]  @relation("Requesters")
+  receivedFriendRequests Friendship[]  @relation("Addressees")
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 }
 
 model Course {
@@ -86,4 +87,24 @@ enum Role {
   INSTRUCTOR
   ADMIN
 }
+
+model Friendship {
+  id         Int      @id @default(autoincrement())
+  requester  User     @relation("Requesters", fields: [requesterId], references: [id])
+  requesterId Int
+  addressee  User     @relation("Addressees", fields: [addresseeId], references: [id])
+  addresseeId Int
+  status     FriendshipStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([requesterId, addresseeId])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 
