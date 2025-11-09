@@ -50,7 +50,7 @@ export class CoursesService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const course = await this.prisma.course.findUnique({
       where: { id },
       include: {
@@ -65,7 +65,7 @@ export class CoursesService {
     return course;
   }
 
-  async update(id: number, data: UpdateCourseDto) {
+  async update(id: string, data: UpdateCourseDto) { 
     const course = await this.prisma.course.findUnique({ where: { id } });
     if (!course) throw new NotFoundException('Curso não encontrado');
 
@@ -78,7 +78,7 @@ export class CoursesService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const course = await this.prisma.course.findUnique({ where: { id } });
     if (!course) throw new NotFoundException('Curso não encontrado');
 

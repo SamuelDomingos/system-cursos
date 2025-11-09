@@ -3,11 +3,11 @@ import { IsBoolean, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 export class UpdateProgressDto {
   @IsInt()
   @IsNotEmpty()
-  userId: number;
+  userId: string;
 
   @IsInt()
   @IsNotEmpty()
-  lessonId: number;
+  lessonId: string;
 
   @IsOptional()
   @IsInt()

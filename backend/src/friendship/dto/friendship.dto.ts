@@ -3,10 +3,10 @@ import { FriendshipStatus } from '@prisma/client';
 
 export class CreateFriendRequestDto {
   @IsInt()
-  requesterId: number;
+  requesterId: string;
 
   @IsInt()
-  addresseeId: number;
+  addresseeId: string;
 }
 
 export class UpdateFriendStatusDto {

@@ -16,7 +16,7 @@ export class CreateCourseDto {
 
   @IsInt()
   @IsNotEmpty()
-  instructorId: number;
+  instructorId: string;
 }
 
 export class UpdateCourseDto extends PartialType(CreateCourseDto) {

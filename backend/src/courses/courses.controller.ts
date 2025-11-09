@@ -41,14 +41,14 @@ export class CoursesController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.coursesService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -61,7 +61,7 @@ export class CoursesController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.coursesService.remove(id);
   }
 }

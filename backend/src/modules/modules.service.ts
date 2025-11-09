@@ -31,7 +31,7 @@ export class ModulesService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const module = await this.prisma.module.findUnique({
       where: { id },
       include: {
@@ -44,7 +44,7 @@ export class ModulesService {
     return module;
   }
 
-  async update(id: number, data: UpdateModuleDto) {
+  async update(id: string, data: UpdateModuleDto) {
     const module = await this.prisma.module.findUnique({ where: { id } });
     if (!module) throw new NotFoundException('Módulo não encontrado');
 
@@ -55,7 +55,7 @@ export class ModulesService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const module = await this.prisma.module.findUnique({ where: { id } });
     if (!module) throw new NotFoundException('Módulo não encontrado');
 

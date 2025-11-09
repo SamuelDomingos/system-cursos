@@ -34,13 +34,13 @@ export class UsersService {
     
     return this.prisma.user.findMany({
       where,
-      select: { id: true, email: true, name: true, createdAt: true, updatedAt: true },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true, updatedAt: true },
       skip: (page - 1) * limit,
       take: limit,
     });
   }
 
-  async findOneById(id: number): Promise<Omit<User, 'password'>> {
+  async findOneById(id: string): Promise<Omit<User, 'password'>> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -50,7 +50,7 @@ export class UsersService {
     return rest;
   }
 
-  async create(email: string, name: string, password: string): Promise<User> {
+  async create(email: string, name: string, password: string, avatar?: string): Promise<User> {
     const existing = await this.prisma.user.findFirst({
       where: {
         OR: [{ email }, { name }],
@@ -62,12 +62,12 @@ export class UsersService {
     const hashed = await bcrypt.hash(password, 10);
 
     return this.prisma.user.create({
-      data: { email, name, password: hashed },
-      select: { id: true, email: true, name: true, createdAt: true, updatedAt: true },
+      data: { email, name, password: hashed, avatar },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true, updatedAt: true },
     });
   }
 
-  async update(id: number, email?: string, name?: string, password?: string): Promise<User> {
+  async update(id: string, email?: string, name?: string, password?: string, avatar?: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) throw new NotFoundException('Usuário não encontrado');
@@ -86,15 +86,16 @@ export class UsersService {
     if (email) updateData.email = email;
     if (name) updateData.name = name;
     if (password) updateData.password = await bcrypt.hash(password, 10);
+    if (avatar) updateData.avatar = avatar;
 
     return this.prisma.user.update({
       where: { id },
       data: updateData,
-      select: { id: true, email: true, name: true, createdAt: true, updatedAt: true },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true, updatedAt: true },
     });
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('Usuário não encontrado');
 

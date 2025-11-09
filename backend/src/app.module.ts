@@ -16,11 +16,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { FriendshipController } from './friendship/friendship.controller';
 import { FriendshipService } from './friendship/friendship.service';
 import { FriendshipModule } from './friendship/friendship.module';
+import { TopicModule } from './topic/topic.module';
 
 @Module({
   imports: [CoursesModule, AuthModule, UsersModule, ConfigModule.forRoot(), PrismaModule, MulterModule.register({
     dest: './uploads',
-  }), FriendshipModule,
+  }), FriendshipModule, TopicModule,
   ],
   controllers: [ModulesController, LessonsController, EnrollmentsController, ProgressController, FriendshipController],
   providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService],

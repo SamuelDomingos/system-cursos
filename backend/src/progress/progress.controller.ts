@@ -17,8 +17,8 @@ export class ProgressController {
   @Get('user/:userId/course/:courseId')
   @UseGuards(AuthGuard('jwt'), EnrollmentGuard)
   getProgress(
-    @Param('userId', ParseIntPipe) userId: number,
-    @Param('courseId', ParseIntPipe) courseId: number,
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
   ) {
     return this.progressService.getUserProgressInCourse(userId, courseId);
   }

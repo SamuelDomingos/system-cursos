@@ -31,14 +31,14 @@ export class LessonsController {
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), EnrollmentGuard)
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.lessonsService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateLessonDto: UpdateLessonDto,
   ) {
     return this.lessonsService.update(id, updateLessonDto);
@@ -46,7 +46,7 @@ export class LessonsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.lessonsService.remove(id);
   }
 }

@@ -8,7 +8,7 @@ export class CreateModuleDto {
 
   @IsInt()
   @IsNotEmpty()
-  courseId: number;
+  courseId: string;
 }
 
 export class UpdateModuleDto extends PartialType(CreateModuleDto) {

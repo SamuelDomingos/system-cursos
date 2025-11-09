@@ -30,7 +30,7 @@ export class FriendshipService {
         });
     }
 
-    async respondRequest(friendshipId: number, dto: UpdateFriendStatusDto) {
+    async respondRequest(friendshipId: string, dto: UpdateFriendStatusDto) {
         const friendship = await this.prisma.friendship.findUnique({
             where: { id: friendshipId },
         });
@@ -43,7 +43,7 @@ export class FriendshipService {
         });
     }
 
-    async getFriends(userId: number) {
+    async getFriends(userId: string) {
         const friendships = await this.prisma.friendship.findMany({
             where: {
                 OR: [
@@ -63,14 +63,14 @@ export class FriendshipService {
         );
     }
 
-    async getPendingRequests(userId: number) {
+    async getPendingRequests(userId: string) {
         return this.prisma.friendship.findMany({
             where: { addresseeId: userId, status: FriendshipStatus.PENDING },
             include: { requester: { select: { id: true, name: true, email: true } } },
         });
     }
 
-    async getFriendsRecentActivity(userId: number) {
+    async getFriendsRecentActivity(userId: string) {
         const friends = await this.getFriends(userId);
 
         return Promise.all(

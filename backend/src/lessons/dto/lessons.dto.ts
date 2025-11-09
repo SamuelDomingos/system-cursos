@@ -20,7 +20,7 @@ export class CreateLessonDto {
 
   @IsInt()
   @IsNotEmpty()
-  moduleId: number;
+  moduleId: string;
 }
 
 export class UpdateLessonDto extends PartialType(CreateLessonDto) {

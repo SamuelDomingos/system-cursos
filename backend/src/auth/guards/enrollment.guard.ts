@@ -21,7 +21,7 @@ export class EnrollmentGuard implements CanActivate {
     }
 
     const lesson = await this.prisma.lesson.findUnique({
-      where: { id: Number(id) },
+      where: { id },
       include: {
         module: { include: { course: true } },
       },

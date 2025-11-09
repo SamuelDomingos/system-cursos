@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, Patch, Body, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Param, Delete, Patch, Body, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
@@ -15,22 +15,22 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.usersService.findOneById(id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: { email?: string; name?: string; password?: string },
+    @Param('id') id: string,
+    @Body() body: { email?: string; name?: string; password?: string; avatar?: string },
   ) {
-    return this.usersService.update(id, body.email || '', body.name || '', body.password || '');
+    return this.usersService.update(id, body.email, body.name, body.password, body.avatar);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id') id: string) {
     await this.usersService.delete(id);
     return { message: 'Usuário removido com sucesso' };
   }

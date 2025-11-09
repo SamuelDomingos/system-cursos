@@ -25,7 +25,7 @@ export class ProgressService {
     });
   }
 
-  async getUserProgressInCourse(userId: number, courseId: number) {
+  async getUserProgressInCourse(userId: string, courseId: string) {
     const lessons = await this.prisma.lesson.findMany({
       where: { module: { courseId } },
       select: { id: true },

@@ -15,13 +15,13 @@ export class EnrollmentsController {
 
   @Get('user/:userId')
   @UseGuards(AuthGuard('jwt'))
-  findUserEnrollments(@Param('userId', ParseIntPipe) userId: number) {
+  findUserEnrollments(@Param('userId') userId: string) {
     return this.enrollmentsService.findUserEnrollments(userId);
   }
 
   @Get('course/:courseId')
   @UseGuards(AuthGuard('jwt'))
-  findCourseEnrollments(@Param('courseId', ParseIntPipe) courseId: number) {
+  findCourseEnrollments(@Param('courseId') courseId: string) {
     return this.enrollmentsService.findCourseEnrollments(courseId);
   }
 }

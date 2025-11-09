@@ -29,14 +29,14 @@ export class ModulesController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.modulesService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))  
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateModuleDto: UpdateModuleDto,
   ) {
     return this.modulesService.update(id, updateModuleDto);
@@ -44,7 +44,7 @@ export class ModulesController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))  
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.modulesService.remove(id);
   }
 }

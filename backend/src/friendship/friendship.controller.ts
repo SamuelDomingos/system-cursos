@@ -24,19 +24,19 @@ export class FriendshipController {
 
   @Patch(':id/respond')
   respondRequest(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() dto: UpdateFriendStatusDto,
   ) {
     return this.friendshipService.respondRequest(id, dto);
   }
 
   @Get(':userId')
-  getFriends(@Param('userId', ParseIntPipe) userId: number) {
+  getFriends(@Param('userId') userId: string) {
     return this.friendshipService.getFriends(userId);
   }
 
   @Get(':userId/pending')
-  getPendingRequests(@Param('userId', ParseIntPipe) userId: number) {
+  getPendingRequests(@Param('userId') userId: string) {
     return this.friendshipService.getPendingRequests(userId);
   }
 }

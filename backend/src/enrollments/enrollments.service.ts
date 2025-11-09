@@ -29,7 +29,7 @@ export class EnrollmentsService {
     });
   }
 
-  async findUserEnrollments(userId: number) {
+  async findUserEnrollments(userId: string) { 
     return this.prisma.enrollment.findMany({
       where: { userId },
       include: {
@@ -39,8 +39,8 @@ export class EnrollmentsService {
       },
     });
   }
-
-  async findCourseEnrollments(courseId: number) {
+  
+  async findCourseEnrollments(courseId: string) {
     return this.prisma.enrollment.findMany({
       where: { courseId },
       include: { user: { select: { id: true, name: true, email: true } } },

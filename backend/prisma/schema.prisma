@@ -8,11 +8,12 @@ generator client {
 }
 
 model User {
-  id                   Int           @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   email                String        @unique
   name                 String
   password             String
   role                 Role          @default(STUDENT)
+  avatar               String?
   enrollments          Enrollment[]
   progresses           Progress[]
   courses              Course[]      @relation("InstructorCourses")
@@ -23,57 +24,58 @@ model User {
 }
 
 model Course {
-  id          Int        @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   title       String
   description String
   thumbnail   String?
   instructor  User        @relation("InstructorCourses", fields: [instructorId], references: [id])
-  instructorId Int
+  instructorId String
   modules     Module[]
   enrollments Enrollment[]
+  courseTopics CourseTopic[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
 
 model Module {
-  id        Int       @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   title     String
   course    Course    @relation(fields: [courseId], references: [id])
-  courseId  Int
+  courseId  String
   lessons   Lesson[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
 
 model Lesson {
-  id        Int       @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   title     String
   content   String?   
   videoUrl  String?
   module    Module    @relation(fields: [moduleId], references: [id])
-  moduleId  Int
+  moduleId  String
   progresses Progress[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
 
 model Enrollment {
-  id        Int     @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   user      User    @relation(fields: [userId], references: [id])
-  userId    Int
+  userId    String
   course    Course  @relation(fields: [courseId], references: [id])
-  courseId  Int
+  courseId  String
   createdAt DateTime @default(now())
 
   @@unique([userId, courseId])
 }
 
 model Progress {
-  id        Int      @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  userId    String
   lesson    Lesson   @relation(fields: [lessonId], references: [id])
-  lessonId  Int
+  lessonId  String
   watchTime Int      @default(0) 
   duration  Int? 
   completed Boolean  @default(false)
@@ -89,11 +91,11 @@ enum Role {
 }
 
 model Friendship {
-  id         Int      @id @default(autoincrement())
+  id                   String        @id @default(uuid())
   requester  User     @relation("Requesters", fields: [requesterId], references: [id])
-  requesterId Int
+  requesterId String
   addressee  User     @relation("Addressees", fields: [addresseeId], references: [id])
-  addresseeId Int
+  addresseeId String
   status     FriendshipStatus @default(PENDING)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -107,4 +109,22 @@ enum FriendshipStatus {
   REJECTED
 }
 
+model Topic {
+  id                   String        @id @default(uuid())
+  name      String        @unique
+  slug      String        @unique
+  courses   CourseTopic[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
 
+model CourseTopic {
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   String
+  topic      Topic    @relation(fields: [topicId], references: [id])
+  topicId    String
+  relevance  Int       @default(1) // de 1 a 5 — o quanto o tópico é importante pro curso
+  createdAt  DateTime  @default(now())
+
+  @@id([courseId, topicId])
+}

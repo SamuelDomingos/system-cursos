@@ -46,7 +46,7 @@ export class LessonsService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const lesson = await this.prisma.lesson.findUnique({
       where: { id },
       include: {
@@ -64,12 +64,12 @@ export class LessonsService {
     return lesson;
   }
 
-  async update(id: number, data: UpdateLessonDto) {
-    const lesson = await this.prisma.lesson.findUnique({ where: { id } });
+  async update(id: string, data: UpdateLessonDto) {
+    const lesson = await this.prisma.lesson.findUnique({ where: { id: String(id) } });
     if (!lesson) throw new NotFoundException('Lição não encontrada');
 
     return this.prisma.lesson.update({
-      where: { id },
+      where: { id },  
       data,
       include: {
         module: {
@@ -83,7 +83,7 @@ export class LessonsService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const lesson = await this.prisma.lesson.findUnique({ where: { id } });
     if (!lesson) throw new NotFoundException('Lição não encontrada');
 
