@@ -5,22 +5,22 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   async findAll(@Query() query: PaginationDto) {
     return this.usersService.findAll(query);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   async findOne(@Param('id') id: string) {
     return this.usersService.findOneById(id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
   async update(
     @Param('id') id: string,
     @Body() body: { email?: string; name?: string; password?: string; avatar?: string },
@@ -28,8 +28,8 @@ export class UsersController {
     return this.usersService.update(id, body.email, body.name, body.password, body.avatar);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   async remove(@Param('id') id: string) {
     await this.usersService.delete(id);
     return { message: 'Usuário removido com sucesso' };
