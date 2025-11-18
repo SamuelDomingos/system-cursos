@@ -50,7 +50,7 @@ export class UsersService {
     return rest;
   }
 
-  async create(email: string, name: string, password: string, avatar?: string): Promise<User> {
+  async create(email: string, name: string, password: string): Promise<User> {
     const existing = await this.prisma.user.findFirst({
       where: {
         OR: [{ email }, { name }],
@@ -62,8 +62,8 @@ export class UsersService {
     const hashed = await bcrypt.hash(password, 10);
 
     return this.prisma.user.create({
-      data: { email, name, password: hashed, avatar },
-      select: { id: true, email: true, name: true, avatar: true, createdAt: true, updatedAt: true },
+      data: { email, name, password: hashed },
+      select: { id: true, email: true, name: true, createdAt: true, updatedAt: true },
     });
   }
 

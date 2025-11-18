@@ -13,10 +13,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Bell, Users, Search, Home, LogOut, UserCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export const Header = () => {
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
+  const [hasBackground, setHasBackground] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setHasBackground(true);
+      } else {
+        setHasBackground(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -24,9 +42,18 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b py-2 sm:h-auto sm:border-0 sm:px-8">
+    <header
+      className={`sticky top-0 z-30 flex h-20 items-center gap-4 border-b py-2 sm:h-auto sm:border-0 sm:px-8 transition-all duration-300 ${
+        hasBackground
+          ? "bg-background/80 backdrop-blur-sm border-b"
+          : "border-b-transparent"
+      }`}
+    >
       <div className="flex items-center gap-2">
-        <Link href="/home" className="flex items-center justify-center cursor-pointer">
+        <Link
+          href="/home"
+          className="flex items-center justify-center cursor-pointer"
+        >
           <Button variant="secondary" size="icon" className="h-8 w-8">
             <Home className="h-4 w-4" />
           </Button>
@@ -61,9 +88,9 @@ export const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link href="/profile">Account</Link>
-            </DropdownMenuItem>
+            <Link href="/profile">
+              <DropdownMenuItem>Account</DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
