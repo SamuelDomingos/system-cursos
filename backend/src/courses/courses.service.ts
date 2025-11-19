@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto/courses.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
@@ -16,11 +16,27 @@ export class CoursesService {
       throw new NotFoundException('Instrutor não encontrado');
     }
 
+    if (data.tags) {
+      let parsedTags: string[];
+      try {
+        parsedTags = JSON.parse(data.tags);
+      } catch (e) {
+        throw new BadRequestException('Tags devem ser uma string JSON válida.');
+      }
+
+      if (!Array.isArray(parsedTags) || parsedTags.length < 3) {
+        throw new BadRequestException('O curso deve ter no mínimo 3 tags.');
+      }
+    }
+
     return this.prisma.course.create({
       data: {
         title: data.title,
         description: data.description,
         thumbnail: data.thumbnail,
+        price: data.price,
+        duration: data.duration,
+        tags: data.tags,
         instructorId: data.instructorId,
       },
       include: { instructor: true },
@@ -65,9 +81,22 @@ export class CoursesService {
     return course;
   }
 
-  async update(id: string, data: UpdateCourseDto) { 
+  async update(id: string, data: UpdateCourseDto) {
     const course = await this.prisma.course.findUnique({ where: { id } });
     if (!course) throw new NotFoundException('Curso não encontrado');
+
+    if (data.tags !== undefined) {
+      let parsedTags: string[];
+      try {
+        parsedTags = JSON.parse(data.tags);
+      } catch (e) {
+        throw new BadRequestException('Tags devem ser uma string JSON válida.');
+      }
+
+      if (!Array.isArray(parsedTags) || parsedTags.length < 3) {
+        throw new BadRequestException('O curso deve ter no mínimo 3 tags.');
+      }
+    }
 
     return this.prisma.course.update({
       where: { id },

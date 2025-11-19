@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsJSON, IsEnum } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
+import { CourseStatus } from '@prisma/client';
 
 export class CreateCourseDto {
   @IsString()
@@ -14,21 +15,26 @@ export class CreateCourseDto {
   @IsOptional()
   thumbnail?: string;
 
-  @IsInt()
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  duration: number;
+
+  @IsString()
+  @IsJSON()
+  @IsNotEmpty()
+  tags: string;
+
+  @IsString()
   @IsNotEmpty()
   instructorId: string;
+
+  @IsEnum(CourseStatus)
+  @IsOptional()
+  status?: CourseStatus;
 }
 
-export class UpdateCourseDto extends PartialType(CreateCourseDto) {
-  @IsString()
-  @IsOptional()
-  title?: string;
-
-  @IsString()
-  @IsOptional()
-  description?: string;
-
-  @IsString()
-  @IsOptional()
-  thumbnail?: string;
-}
+export class UpdateCourseDto extends PartialType(CreateCourseDto) {}

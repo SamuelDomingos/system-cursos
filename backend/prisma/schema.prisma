@@ -28,6 +28,10 @@ model Course {
   title       String
   description String
   thumbnail   String?
+  price       Float
+  duration    Int
+  tags        String
+  status      CourseStatus @default(DRAFT)
   instructor  User        @relation("InstructorCourses", fields: [instructorId], references: [id])
   instructorId String
   modules     Module[]
@@ -35,6 +39,12 @@ model Course {
   courseTopics CourseTopic[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 model Module {
