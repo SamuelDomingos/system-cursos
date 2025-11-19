@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString, IsNumber, IsJSON, IsEnum } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { CourseStatus } from '@prisma/client';
+import { Type } from 'class-transformer';
 
 export class CreateCourseDto {
   @IsString()
@@ -15,10 +16,12 @@ export class CreateCourseDto {
   @IsOptional()
   thumbnail?: string;
 
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   price: number;
 
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   duration: number;

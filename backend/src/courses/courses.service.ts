@@ -39,7 +39,9 @@ export class CoursesService {
         tags: data.tags,
         instructorId: data.instructorId,
       },
-      include: { instructor: true },
+      include: {
+        instructor: { select: { id: true, name: true, avatar: true } },
+      },
     });
   }
 
@@ -70,7 +72,7 @@ export class CoursesService {
     const course = await this.prisma.course.findUnique({
       where: { id },
       include: {
-        instructor: { select: { id: true, name: true, email: true, role: true } },
+        instructor: { select: { id: true, name: true, avatar: true } },
         modules: {
           include: { lessons: true },
         },

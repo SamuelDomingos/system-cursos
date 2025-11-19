@@ -22,6 +22,9 @@ lerna-debug.log*
 #migrates
 /prisma/migrations
 
+#uploads
+/uploads
+
 # IDEs and editors
 /.idea
 .project

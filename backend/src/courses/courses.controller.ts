@@ -16,13 +16,14 @@ import { CoursesService } from './courses.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateCourseDto, UpdateCourseDto } from './dto/courses.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { multerConfig } from 'src/config/multer.config';
 
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) { }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('thumbnail'))
+  @UseInterceptors(FileInterceptor('thumbnail', multerConfig))
   @UseGuards(AuthGuard('jwt'))
   create(@Body() createCourseDto: CreateCourseDto,
     @UploadedFile() file: Express.Multer.File,) {
@@ -45,6 +46,7 @@ export class CoursesController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('thumbnail', multerConfig)) 
   @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
