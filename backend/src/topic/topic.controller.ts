@@ -14,8 +14,11 @@ export class TopicController {
     }
 
     @Get()
-    findAll() {
-        return this.topicsService.findAll();
+    findAll(
+        @Query('page') page = 1,
+        @Query('limit') limit = 10,
+    ) {
+        return this.topicsService.findAll(Number(page), Number(limit));
     }
 
     @Post('add-course')

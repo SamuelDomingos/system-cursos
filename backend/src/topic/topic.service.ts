@@ -4,13 +4,13 @@ import { CreateTopicDto, AddCourseToTopicDto } from './dto/topic.dto';
 
 @Injectable()
 export class TopicService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(dto: CreateTopicDto) {
     return this.prisma.topic.create({ data: dto });
   }
 
-  async findAll() {
+  async findAll(page = 1, limit = 10) {
     return this.prisma.topic.findMany({
       include: {
         courses: {
@@ -29,6 +29,8 @@ export class TopicService {
             },
           },
           orderBy: { relevance: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
         },
       },
     });

@@ -1,27 +1,16 @@
-import { useState } from 'react';
-import { updateUser } from '@/lib/api/users/users';
-import { UpdateUserDto } from '@/lib/api/types/users';
-import { toast } from 'sonner';
+import { useFetch } from "@/hooks/useFetch";
+import { updateUser } from "@/lib/api/users/users";
 
-export const useUpdateProfile = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+export const useProfile = () => {
 
-  const updateProfile = async (id: string, data: UpdateUserDto) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await updateUser(id, data);
-      toast.success('Perfil atualizado com sucesso!');
-    } catch (err: any) {
-      setError(err);
-      toast.error('Erro ao atualizar o perfil.', {
-        description: err.message || 'Tente novamente mais tarde.',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    execute: updateProfile,
+    isLoading,
+    error,
+  } = useFetch(updateUser, {
+    successMessage: "Perfil atualizado com sucesso!",
+    errorMessage: "Erro ao atualizar o perfil.",
+  });
 
   return {
     updateProfile,

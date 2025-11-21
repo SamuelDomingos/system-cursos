@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { CoursesModule } from './courses/courses.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -21,7 +23,12 @@ import { TopicModule } from './topic/topic.module';
 @Module({
   imports: [CoursesModule, AuthModule, UsersModule, ConfigModule.forRoot(), PrismaModule, MulterModule.register({
     dest: './uploads',
-  }), FriendshipModule, TopicModule,
+  }),
+  ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', '..', 'uploads'),
+    serveRoot: '/uploads',
+  }),
+  FriendshipModule, TopicModule,
   ],
   controllers: [ModulesController, LessonsController, EnrollmentsController, ProgressController, FriendshipController],
   providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService],

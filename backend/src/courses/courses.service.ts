@@ -7,6 +7,37 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 export class CoursesService {
   constructor(private prisma: PrismaService) { }
 
+  private toSlug(s: string) {
+    return s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  private async _associateCourseWithTopics(courseId: string, tagsJson: string) {
+    try {
+      const tags = tagsJson ? JSON.parse(tagsJson) : [];
+      if (Array.isArray(tags) && tags.length) {
+        for (const tag of tags) {
+          const slug = this.toSlug(String(tag));
+          let topic = await this.prisma.topic.findUnique({ where: { slug } });
+          if (!topic) {
+            continue;
+          }
+          await this.prisma.courseTopic.upsert({
+            where: { courseId_topicId: { courseId: courseId, topicId: topic.id } },
+            update: { relevance: 3 },
+            create: { courseId: courseId, topicId: topic.id, relevance: 3 },
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Error associating course with topics:", e);
+    }
+  }
+
   async create(data: CreateCourseDto) {
     const instructor = await this.prisma.user.findUnique({
       where: { id: data.instructorId },
@@ -29,7 +60,7 @@ export class CoursesService {
       }
     }
 
-    return this.prisma.course.create({
+    const created = await this.prisma.course.create({
       data: {
         title: data.title,
         description: data.description,
@@ -43,6 +74,10 @@ export class CoursesService {
         instructor: { select: { id: true, name: true, avatar: true } },
       },
     });
+
+    await this._associateCourseWithTopics(created.id, created.tags);
+
+    return created;
   }
 
   async findAll(paginationDto: PaginationDto) {
@@ -100,13 +135,17 @@ export class CoursesService {
       }
     }
 
-    return this.prisma.course.update({
+    const updated = await this.prisma.course.update({
       where: { id },
       data,
       include: {
         instructor: { select: { id: true, name: true } },
       },
     });
+
+    await this._associateCourseWithTopics(updated.id, updated.tags);
+
+    return updated;
   }
 
   async remove(id: string) {

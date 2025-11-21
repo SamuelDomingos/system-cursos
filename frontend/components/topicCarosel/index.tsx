@@ -1,26 +1,27 @@
+'use client';
+
 import { TopicCarousel } from "./components/topicCarosel";
+import { useFetchAllTopics } from "./hooks/useTopic";
 
-interface TopicSection {
-  title: string;
-  topics: {
-    title: string;
-    description: string;
-    value: string;
-    imageSrc?: string;
-  }[];
-}
+export const TopicCarousels = () => {
+  const { topics, isLoading } = useFetchAllTopics();
 
-interface TopicCarouselsProps {
-  sections: TopicSection[];
-}
+  if (isLoading) {
+    return <div className="mt-20 text-center">Carregando...</div>;
+  }
 
-export function TopicCarousels({ sections }: TopicCarouselsProps) {
   return (
     <div className="mt-20">
-      {sections.map((section, index) => (
-        <div key={index} className="mt-20">
-          <h2 className="text-4xl font-bold mb-4 max-w-screen-2xl mx-auto">{section.title}</h2>
-          <TopicCarousel topics={section.topics} />
+      {topics.map((topic) => (
+        <div key={topic.id} className="mt-20">
+          <h2 className="text-4xl font-bold mb-4 max-w-screen-2xl mx-auto">
+            {topic.name}
+          </h2>
+          {topic.courses && topic.courses.length > 0 ? (
+            <TopicCarousel courses={topic.courses} />
+          ) : (
+            <p className="text-center text-gray-500">Nenhum curso disponível.</p>
+          )}
         </div>
       ))}
     </div>
