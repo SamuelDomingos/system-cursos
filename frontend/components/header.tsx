@@ -5,18 +5,29 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Bell, Users, Search, Home, LogOut, UserCircle } from "lucide-react";
+  Bell,
+  Users,
+  Search,
+  Home,
+  LogOut,
+  UserCircle,
+  ShoppingCart,
+} from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import CartDropdownContent from "./CartDropdownContent";
+import { useCart } from "@/contexts/CartContext";
+import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 
 export const Header = () => {
   const { isAuthenticated, logout } = useAuth();
+  const { cartCount } = useCart();
   const router = useRouter();
   const [hasBackground, setHasBackground] = useState(false);
 
@@ -76,30 +87,57 @@ export const Header = () => {
           <Bell className="h-4 w-4" />
           <span className="sr-only">Notifications</span>
         </Button>
+        <HoverCard openDelay={200} closeDelay={200}>
+          <HoverCardTrigger asChild>
+            <Button variant="outline" size="icon" className="relative h-8 w-8">
+              <ShoppingCart className="h-4 w-4" />
+              {cartCount > 0 && (
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center rounded-full p-0 text-xs">
+                  {cartCount}
+                </Badge>
+              )}
+              <span className="sr-only">Cart</span>
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent align="end" className="p-0 w-80">
+            <CartDropdownContent />
+          </HoverCardContent>
+        </HoverCard>
         <Button variant="outline" size="icon" className="h-8 w-8">
           <Users className="h-4 w-4" />
           <span className="sr-only">Friends</span>
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <HoverCard openDelay={200} closeDelay={200}>
+          <HoverCardTrigger asChild>
             <Button variant="default" size="icon" className="rounded-full">
               <UserCircle className="h-5 w-5" />
               <span className="sr-only">Toggle user menu</span>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <Link href="/profile">
-              <DropdownMenuItem>Account</DropdownMenuItem>
+          </HoverCardTrigger>
+          <HoverCardContent align="end" className="w-40 p-1">
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            >
+              Account
             </Link>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <div className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer">
+              Support
+            </div>
+            <div className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground cursor-pointer">
+              Settings
+            </div>
+            <Separator className="my-1" />
+            <Button
+              variant="ghost"
+              onClick={handleLogout}
+              className="w-full justify-start flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </Button>
+          </HoverCardContent>
+        </HoverCard>
       </div>
     </header>
   );

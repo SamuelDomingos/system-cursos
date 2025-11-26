@@ -19,6 +19,7 @@ import { FriendshipController } from './friendship/friendship.controller';
 import { FriendshipService } from './friendship/friendship.service';
 import { FriendshipModule } from './friendship/friendship.module';
 import { TopicModule } from './topic/topic.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [CoursesModule, AuthModule, UsersModule, ConfigModule.forRoot(), PrismaModule, MulterModule.register({
@@ -28,7 +29,7 @@ import { TopicModule } from './topic/topic.module';
     rootPath: join(__dirname, '..', '..', 'uploads'),
     serveRoot: '/uploads',
   }),
-  FriendshipModule, TopicModule,
+  FriendshipModule, TopicModule, StripeModule,
   ],
   controllers: [ModulesController, LessonsController, EnrollmentsController, ProgressController, FriendshipController],
   providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService],

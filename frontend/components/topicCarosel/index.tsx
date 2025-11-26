@@ -12,7 +12,7 @@ export const TopicCarousels = () => {
 
   return (
     <div className="mt-20">
-      {topics.map((topic) => (
+      {topics?.map((topic) => (
         <div key={topic.id} className="mt-20">
           <h2 className="text-4xl font-bold mb-4 max-w-screen-2xl mx-auto">
             {topic.name}

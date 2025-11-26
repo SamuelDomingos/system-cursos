@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { CartProvider } from "@/contexts/CartContext";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -33,9 +34,11 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" enableSystem>
           <Toaster position="top-center" richColors={true} />
-          <AuthProvider>
-            <AuthGuard protectedRoutes={["/home"]}>{children}</AuthGuard>
-          </AuthProvider>
+          <CartProvider>
+            <AuthProvider>
+              <AuthGuard protectedRoutes={["/home"]}>{children}</AuthGuard>
+            </AuthProvider>
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

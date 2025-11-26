@@ -9,8 +9,6 @@ import { TopicCard } from "./topicCard";
 
 export const TopicCarousel = ({ courses }) => {
   
-  console.log(courses);
-  
   return (
     <Carousel
       opts={{
