@@ -5,54 +5,38 @@ import {
   Body,
   Query,
   Headers,
-  RawBodyRequest,
   Req,
   HttpCode,
   HttpStatus,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
+
+import type { RawBodyRequest } from '@nestjs/common';
+
 import { StripeService } from './stripe.service';
+import { CreateCheckoutDto } from './dto/create-checkout.dto';
+import { CoursesService } from '../courses/courses.service';
 import { Request } from 'express';
 
 @Controller('stripe')
 export class StripeController {
-  constructor(private readonly stripeService: StripeService) {}
+  constructor(
+    private readonly stripeService: StripeService,
+    private readonly coursesService: CoursesService,
+  ) { }
 
   @Post('create-checkout-session')
-  async createCheckoutSession(
-    @Body() body: { items: Array<{ name: string; price: number; quantity: number }>, email?: string },
-  ) {
-    const lineItems = await Promise.all(
-      body.items.map(async (item) => {
-        const priceData = await this.stripeService.createPrice(
-          item.name,
-          item.price * 100,
-        );
-        return {
-          ...priceData,
-          quantity: item.quantity,
-        };
-      }),
-    );
+  async createCheckoutSession(@Body() createCheckoutDto: CreateCheckoutDto) {
+    const courses = await this.coursesService._findManyByIds(createCheckoutDto.courseIds);
 
-    const session = await this.stripeService.createCheckoutSession(
-      lineItems,
-      body.email,
-    );
-
-    return {
-      clientSecret: session.client_secret,
-    };
+    return await this.stripeService.createCheckoutSession(courses, createCheckoutDto);
   }
 
   @Get('session-status')
   async getSessionStatus(@Query('session_id') sessionId: string) {
-    const session = await this.stripeService.retrieveSession(sessionId);
 
-    return {
-      status: session.status,
-      payment_status: session.payment_status,
-      customer_email: session.customer_email,
-    };
+    return await this.stripeService.getSessionStatus(sessionId);
   }
 
   @Post('webhook')
@@ -61,31 +45,14 @@ export class StripeController {
     @Headers('stripe-signature') signature: string,
     @Req() request: RawBodyRequest<Request>,
   ) {
-    const event = this.stripeService.constructEventFromPayload(
-      signature,
-      request.rawBody,
-    );
-
-    switch (event.type) {
-      case 'checkout.session.completed':
-        const session = event.data.object;
-        console.log('Pagamento concluído:', session);
-        break;
-
-      case 'payment_intent.succeeded':
-        const paymentIntent = event.data.object;
-        console.log('PaymentIntent bem-sucedido:', paymentIntent);
-        break;
-
-      case 'payment_intent.payment_failed':
-        const failedPayment = event.data.object;
-        console.log('Pagamento falhou:', failedPayment);
-        break;
-
-      default:
-        console.log(`Evento não tratado: ${event.type}`);
+    if (!signature) {
+      throw new BadRequestException('Assinatura do webhook ausente');
     }
 
-    return { received: true };
+    if (!request.rawBody) {
+      throw new BadRequestException('Raw body ausente no webhook');
+    }
+
+    return await this.stripeService.handleWebhook(signature, request.rawBody);
   }
 }

@@ -4,7 +4,7 @@ import { CreateEnrollmentDto } from './dto/enrollment.dto';
 
 @Injectable()
 export class EnrollmentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async enrollUser(dto: CreateEnrollmentDto) {
     const { userId, courseId } = dto;
@@ -29,9 +29,12 @@ export class EnrollmentsService {
     });
   }
 
-  async findUserEnrollments(userId: string) { 
+  async findUserEnrollments(userId: string, courseId?: string) {
+    const where: any = { userId };
+    if (courseId) where.courseId = courseId;
+
     return this.prisma.enrollment.findMany({
-      where: { userId },
+      where,
       include: {
         course: {
           include: { modules: { include: { lessons: true } } },
@@ -39,7 +42,7 @@ export class EnrollmentsService {
       },
     });
   }
-  
+
   async findCourseEnrollments(courseId: string) {
     return this.prisma.enrollment.findMany({
       where: { courseId },

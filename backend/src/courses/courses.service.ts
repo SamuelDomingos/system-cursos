@@ -38,6 +38,21 @@ export class CoursesService {
     }
   }
 
+    async _findManyByIds(ids: string[]) {
+    const courses = await this.prisma.course.findMany({
+      where: { id: { in: ids } },
+      include: { instructor: { select: { id: true, name: true, avatar: true } } },
+    });
+
+    if (courses.length !== ids.length) {
+      const foundIds = new Set(courses.map(c => c.id));
+      const notFoundIds = ids.filter(id => !foundIds.has(id));
+      throw new NotFoundException(`Cursos não encontrados: ${notFoundIds.join(', ')}`);
+    }
+
+    return courses;
+  }
+
   async create(data: CreateCourseDto) {
     const instructor = await this.prisma.user.findUnique({
       where: { id: data.instructorId },

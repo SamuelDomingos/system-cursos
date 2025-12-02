@@ -111,9 +111,14 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <Button variant="default" className="w-full mt-4">
-                  Prosseguir com a finalização
-                </Button>
+                <Link href="/checkout" className="w-full">
+                  <Button
+                    variant="default"
+                    className="w-full mt-4"
+                  >
+                    Prosseguir com a finalização
+                  </Button>
+                </Link>
 
                 <Separator className="my-6" />
 
