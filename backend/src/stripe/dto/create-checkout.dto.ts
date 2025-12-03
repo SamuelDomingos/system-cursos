@@ -13,4 +13,12 @@ export class CreateCheckoutDto {
   @IsString()
   @IsOptional()
   userId?: string;
+
+  @IsString()
+  @IsOptional()
+  paymentMethod?: 'card' | 'pix' | 'boleto' | 'wallet';
+
+  @IsString()
+  @IsOptional()
+  cardPmBrand?: string;
 }

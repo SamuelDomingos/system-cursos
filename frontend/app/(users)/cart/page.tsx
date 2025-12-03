@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Trash2, Heart, Bookmark } from "lucide-react";
+import { useCartProcess } from "@/app/(users)/cart/_hooks/useCartProcess";
 
 export default function CartPage() {
   const { cartItems, cartTotal, removeItemFromCart } = useCart();
   const [coupon, setCoupon] = useState("");
+  const { goToCheckout, isRedirecting } = useCartProcess();
 
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -111,14 +113,14 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <Link href="/checkout" className="w-full">
-                  <Button
-                    variant="default"
-                    className="w-full mt-4"
-                  >
-                    Prosseguir com a finalização
-                  </Button>
-                </Link>
+                <Button
+                  variant="default"
+                  className="w-full mt-4"
+                  onClick={goToCheckout}
+                  disabled={isRedirecting}
+                >
+                  Prosseguir com a finalização
+                </Button>
 
                 <Separator className="my-6" />
 

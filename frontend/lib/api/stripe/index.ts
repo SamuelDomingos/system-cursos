@@ -10,3 +10,8 @@ export const findSessionStatus = async (sessionId: string): Promise<SessionStatu
   const result = await http.get<SessionStatusResponse>(`/stripe/session-status?session_id=${sessionId}`);
   return result;
 };
+
+export const handleWebhook = async (signature: string, rawBody: Buffer) => {
+  const result = await http.post('/stripe/handle-webhook', { signature, rawBody });
+  return result;
+};
