@@ -9,8 +9,8 @@ export class EnrollmentsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  enroll(@Body() dto: CreateEnrollmentDto) {
-    return this.enrollmentsService.enrollUser(dto);
+  create(@Body() dto: CreateEnrollmentDto) {
+    return this.enrollmentsService.create(dto);
   }
 
   @Get('user/:userId')

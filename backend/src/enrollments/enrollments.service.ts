@@ -6,7 +6,7 @@ import { CreateEnrollmentDto } from './dto/enrollment.dto';
 export class EnrollmentsService {
   constructor(private prisma: PrismaService) { }
 
-  async enrollUser(dto: CreateEnrollmentDto) {
+  async create(dto: CreateEnrollmentDto) {
     const { userId, courseId } = dto;
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });

@@ -26,8 +26,8 @@ export const useCartProcess = () => {
         userId: user?.id || "",
         customerEmail: user?.email || "",
       });
-      if (res?.sessionId) {
-        router.push(`/checkout/${res.sessionId}`);
+      if (res?.checkoutUrl) {
+        router.push(res.checkoutUrl);
       } else {
         toast.error("Não foi possível criar a sessão de checkout.");
       }

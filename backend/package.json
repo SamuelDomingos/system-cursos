@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "proxy": "http://localhost:3001",
   "scripts": {
     "prisma:migrate:dev": "dotenv -e .env -- npx prisma migrate dev --name init",
     "build": "nest build",

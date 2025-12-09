@@ -6,8 +6,7 @@ export interface CreateCheckoutSessionRequest {
 }
 
 export interface CreateCheckoutSessionResponse {
-  clientSecret: string;
-  sessionId: string;
+  checkoutUrl: string;
 }
 
 export interface SessionStatusResponse {
@@ -16,6 +15,7 @@ export interface SessionStatusResponse {
   customer_email: string;
   amount_total: number;
   currency: string;
+  client_secret?: string;
   metadata: {
     courseId?: string;
     userId?: string;

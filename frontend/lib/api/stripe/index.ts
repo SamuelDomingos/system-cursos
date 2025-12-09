@@ -11,7 +11,4 @@ export const findSessionStatus = async (sessionId: string): Promise<SessionStatu
   return result;
 };
 
-export const handleWebhook = async (signature: string, rawBody: Buffer) => {
-  const result = await http.post('/stripe/handle-webhook', { signature, rawBody });
-  return result;
-};
+
