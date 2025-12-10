@@ -1,6 +1,7 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEnrollmentDto } from './dto/enrollment.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class EnrollmentsService {
@@ -29,18 +30,55 @@ export class EnrollmentsService {
     });
   }
 
-  async findUserEnrollments(userId: string, courseId?: string) {
+  async findUserEnrollments(userId: string, query: PaginationDto) {
+    const { page = 1, limit = 10 } = query;
     const where: any = { userId };
-    if (courseId) where.courseId = courseId;
 
-    return this.prisma.enrollment.findMany({
+    const enrollments = await this.prisma.enrollment.findMany({
       where,
       include: {
         course: {
-          include: { modules: { include: { lessons: true } } },
+          include: { instructor: { select: { id: true, name: true, avatar: true } } },
         },
       },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    if (!enrollments.length) throw new NotFoundException('Nenhum curso matriculado para este usuário');
+
+    const withProgress = await Promise.all(
+      enrollments.map(async (enrollment) => {
+        const course = enrollment.course;
+
+        const totalLessons = await this.prisma.lesson.count({
+          where: { module: { courseId: course.id } },
+        });
+
+        const completedLessons = await this.prisma.progress.count({
+          where: { userId, lesson: { module: { courseId: course.id } }, completed: true },
+        });
+
+        const totalWatchTime = await this.prisma.progress.aggregate({
+          where: { userId, lesson: { module: { courseId: course.id } } },
+          _sum: { watchTime: true },
+        });
+
+        const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+
+        return {
+          Course: {...course},
+          userProgress: {
+            totalLessons,
+            completedLessons,
+            progressPercentage,
+            totalWatchTime: totalWatchTime._sum.watchTime || 0,
+          },
+        };
+      })
+    );
+
+    return withProgress;
   }
 
   async findCourseEnrollments(courseId: string) {

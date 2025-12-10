@@ -59,7 +59,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const clearCart = () => {
     setCartItems([]);
-    toast.info("Carrinho limpo.");
   };
 
   const cartCount = cartItems.length;

@@ -9,8 +9,8 @@ const CartDropdownContent = () => {
 
   if (!cartItems || cartItems.length === 0) {
     return (
-      <div>
-        <p className="text-sm text-center text-gray-500 p-4">
+      <div className="w-auto p-4">
+        <p className="text-sm text-center text-gray-500 mb-4">
           Your cart is empty. Keep shopping
         </p>
 

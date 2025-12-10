@@ -38,7 +38,7 @@ export class CoursesService {
     }
   }
 
-    async _findManyByIds(ids: string[]) {
+  async _findManyByIds(ids: string[]) {
     const courses = await this.prisma.course.findMany({
       where: { id: { in: ids } },
       include: { instructor: { select: { id: true, name: true, avatar: true } } },
@@ -125,6 +125,30 @@ export class CoursesService {
         instructor: { select: { id: true, name: true, avatar: true } },
         modules: {
           include: { lessons: true },
+        },
+      },
+    });
+
+    if (!course) throw new NotFoundException('Curso não encontrado');
+    return course;
+  }
+
+  async findUserAvailableCourse(userId: string, courseId: string) {
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { userId, courseId },
+    });
+
+    if (!enrollment) {
+      throw new NotFoundException('Curso não encontrado ou usuário não matriculado');
+    }
+
+    const course = await this.prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        modules: {
+          include: {
+            lessons: true,
+          },
         },
       },
     });

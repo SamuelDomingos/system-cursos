@@ -40,6 +40,14 @@ export class CoursesController {
     return this.coursesService.findAll(query);
   }
 
+  @Get(':userId/watch/:courseId')
+  findUserAvailableCourse(
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
+  ) {
+    return this.coursesService.findUserAvailableCourse(userId, courseId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.coursesService.findOne(id);

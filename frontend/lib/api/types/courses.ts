@@ -10,6 +10,16 @@ export type Course = {
   modules: Module[];
 };
 
+export type CourseSingleUser = {
+  Course: Course;
+  userProgress: {
+    totalLessons: number;
+    completedLessons: number;
+    progressPercentage: number;
+    totalWatchTime: number;
+  };
+}
+
 export type CreateCourseDto = {
   title: string;
   description: string;

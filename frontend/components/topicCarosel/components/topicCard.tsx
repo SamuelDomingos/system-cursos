@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import { formatCurrency } from "@/lib/utils";
+import Image from "next/image";
 
 interface CourseData {
   id: string;
@@ -33,15 +34,14 @@ export function TopicCard({
     <Link href={`/cursor/${course.id}`}>
       <Card className="group w-[360px] h-[250px] flex flex-col justify-between relative overflow-hidden cursor-pointer">
       <div className="absolute inset-0 flex items-center justify-center">
-        {imageSrc ? (
-          <img
-            src={imageSrc}
+          <Image
+            src={imageSrc || "https://via.placeholder.com/150"}
             alt={course.title}
+            width={100}
+            height={100}
             className="object-cover w-full h-full"
+            unoptimized={true}
           />
-        ) : (
-          <span className="text-lg font-semibold text-gray-500">Curso</span>
-        )}
       </div>
 
       <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-black/50 text-white">

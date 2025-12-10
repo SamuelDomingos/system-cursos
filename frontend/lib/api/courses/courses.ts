@@ -32,3 +32,13 @@ export const deleteCourse = async (id: string): Promise<void> => {
   await http.delete(`/courses/${id}`);
 };
 
+export const findUserAvailableCourses = async (
+  userId: string,
+  page = 1,
+  limit = 10,
+): Promise<PaginatedResponse<Course>> => {
+  const result = await http.get<PaginatedResponse<Course>>(`/enrollments/user/${userId}`, {
+    params: { userId, page, limit},
+  });
+  return result;
+};

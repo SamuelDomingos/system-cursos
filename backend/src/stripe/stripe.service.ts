@@ -2,13 +2,17 @@ import { Injectable, BadRequestException, NotFoundException, Logger } from '@nes
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { CreateCheckoutDto } from './dto/create-checkout.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class StripeService {
   private stripe: Stripe;
   private readonly logger = new Logger(StripeService.name);
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService,
+  ) {
     const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
 
     if (!secretKey) {
@@ -57,14 +61,25 @@ export class StripeService {
 
     try {
 
+      if (!dto.userId) {
+        throw new BadRequestException('ID do usuário é obrigatório para criar a sessão de checkout');
+      }
+
+      const user = await this.prisma.user.findUnique({ where: { id: dto.userId } });
+      if (!user) {
+        throw new NotFoundException('Usuário não encontrado');
+      }
+
       const sessionParams: Stripe.Checkout.SessionCreateParams = {
         billing_address_collection: 'auto',
         line_items: lineItems,
         mode: 'payment',
-        success_url: `${this.configService.get('FRONTEND_URL')}/success`,
+        customer_email: user.email,
+        client_reference_id: dto.userId,
+        success_url: `${this.configService.get('FRONTEND_URL')}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${this.configService.get('FRONTEND_URL')}/cart`,
         metadata: {
-          userId: dto.userId || null,
+          userId: user.id,
           courseIds: JSON.stringify(courses.map(c => c.id)),
         },
       };
@@ -113,9 +128,6 @@ export class StripeService {
     }
   }
 
-  /**
-   * Verifica webhook signature e retorna evento
-   */
   constructWebhookEvent(body: Buffer, signature: string): Stripe.Event {
     try {
       return this.stripe.webhooks.constructEvent(
@@ -128,9 +140,6 @@ export class StripeService {
     }
   }
 
-  /**
-   * Recupera detalhes completos da sessão para webhook
-   */
   async getFullSessionDetails(
     sessionId: string,
   ): Promise<Stripe.Checkout.Session> {

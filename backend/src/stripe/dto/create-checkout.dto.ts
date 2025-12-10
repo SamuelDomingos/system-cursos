@@ -6,10 +6,6 @@ export class CreateCheckoutDto {
   @IsUUID(undefined, { each: true })
   courseIds: string[];
 
-  @IsEmail()
-  @IsOptional()
-  customerEmail?: string;
-
   @IsString()
   @IsOptional()
   userId?: string;

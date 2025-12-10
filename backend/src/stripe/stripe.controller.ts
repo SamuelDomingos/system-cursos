@@ -22,18 +22,10 @@ export class StripeController {
     private readonly stripeService: StripeService,
     private readonly coursesService: CoursesService,
     private readonly enrollmentsService: EnrollmentsService,
-  ) {}
+  ) { }
 
   @Post('create-checkout-session')
   async createCheckoutSession(@Body() createCheckoutDto: CreateCheckoutDto) {
-
-    if (!createCheckoutDto.courseIds || createCheckoutDto.courseIds.length === 0) {
-      throw new BadRequestException('Pelo menos um curso é obrigatório');
-    }
-
-    if (!createCheckoutDto.customerEmail) {
-      throw new BadRequestException('Email do usuário é obrigatório');
-    }
 
     const courses = await this.coursesService._findManyByIds(
       createCheckoutDto.courseIds,
@@ -77,7 +69,6 @@ export class StripeController {
     session: any,
   ): Promise<void> {
     try {
-      // Recupera detalhes completos da sessão
       const fullSession = await this.stripeService.getFullSessionDetails(
         session.id,
       );
