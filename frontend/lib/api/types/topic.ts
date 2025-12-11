@@ -1,5 +1,4 @@
 import { Course } from './courses';
-import { User } from './users';
 
 export type Topic = {
   id: number;
@@ -9,6 +8,14 @@ export type Topic = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type PaginationTopics = {
+  topics: Topic[],
+  topicTotal: number,
+  topicPage: number,
+  topicLimit: number,
+  topicTotalPages: number,
+}
 
 export type CourseTopic = {
   course: Course;

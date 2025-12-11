@@ -4,9 +4,6 @@ import { useCallback } from "react";
 
 export const useFetchCoursesByUser = (userId: string) => {
   const fetcher = useCallback(async (page?: number, limit?: number) => {
-    if (!userId) {
-      return Promise.resolve({ ...[], total: 0, page: 1, limit: 10 });
-    }
     return findUserAvailableCourses(userId, page, limit);
   }, [userId]);
 
@@ -25,7 +22,7 @@ export const useFetchCoursesByUser = (userId: string) => {
       limit: 10,
     },
   });
-
+  
   return {
     fetchCoursesByUser: refetch,
     courses,

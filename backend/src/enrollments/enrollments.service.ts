@@ -33,6 +33,7 @@ export class EnrollmentsService {
   async findUserEnrollments(userId: string, query: PaginationDto) {
     const { page = 1, limit = 10 } = query;
     const where: any = { userId };
+    const total = await this.prisma.enrollment.count({ where });
 
     const enrollments = await this.prisma.enrollment.findMany({
       where,
@@ -67,7 +68,7 @@ export class EnrollmentsService {
         const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
         return {
-          Course: {...course},
+          course: course,
           userProgress: {
             totalLessons,
             completedLessons,
@@ -78,7 +79,13 @@ export class EnrollmentsService {
       })
     );
 
-    return withProgress;
+    return {
+      data: withProgress,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findCourseEnrollments(courseId: string) {

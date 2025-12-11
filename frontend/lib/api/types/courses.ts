@@ -11,7 +11,7 @@ export type Course = {
 };
 
 export type CourseSingleUser = {
-  Course: Course;
+  course: Course;
   userProgress: {
     totalLessons: number;
     completedLessons: number;

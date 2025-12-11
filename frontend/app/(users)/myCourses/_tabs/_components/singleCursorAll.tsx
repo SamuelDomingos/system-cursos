@@ -24,17 +24,18 @@ interface SingleCursorAllProps {
   course: CourseSingleUser;
 }
 
-const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
+const SingleCursorAll = ({ course }: SingleCursorAllProps) => {;
+  
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-  const imageSrc = course.Course.thumbnail ? `${API_BASE_URL}${course.Course.thumbnail}` : "https://via.placeholder.com/150";
+  const imageSrc = course.course.thumbnail ? `${API_BASE_URL}${course.course.thumbnail}` : "https://via.placeholder.com/150";
 
   return (
     <Card className="group w-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
-        <Link href={`/cursor/${course.Course.id}`} className="block">
+        <Link href={`/cursor/${course.course.id}`} className="block">
           <Image
             src={imageSrc}
-            alt={course.Course.title}
+            alt={course.course.title}
             width={400}
             height={225}
             className="w-full object-cover"
@@ -76,10 +77,10 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
       </div>
       <CardHeader className="p-4 pb-2">
         <CardTitle className="text-base font-semibold leading-tight">
-          {course.Course.title}
+          {course.course.title}
         </CardTitle>
         <CardDescription className="text-xs text-gray-600 mt-1">
-          {course.Course.instructor.name}
+          {course.course.instructor.name}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4 py-2 pt-0">

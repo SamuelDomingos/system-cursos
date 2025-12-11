@@ -1,6 +1,6 @@
 import http from '@/utils/http';
 import { PaginatedResponse } from '@/lib/api/types/pagination';
-import { Course, CreateCourseDto, UpdateCourseDto } from '@/lib/api/types/courses';
+import { Course, CourseSingleUser, CreateCourseDto, UpdateCourseDto } from '@/lib/api/types/courses';
 
 export const createCourse = async (dto: CreateCourseDto): Promise<Course> => {
   const result = await http.post<Course>('/courses', dto);
@@ -36,8 +36,8 @@ export const findUserAvailableCourses = async (
   userId: string,
   page = 1,
   limit = 10,
-): Promise<PaginatedResponse<Course>> => {
-  const result = await http.get<PaginatedResponse<Course>>(`/enrollments/user/${userId}`, {
+): Promise<PaginatedResponse<CourseSingleUser>> => {
+  const result = await http.get<PaginatedResponse<CourseSingleUser>>(`/enrollments/user/${userId}`, {
     params: { userId, page, limit},
   });
   return result;

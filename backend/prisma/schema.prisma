@@ -19,6 +19,7 @@ model User {
   courses              Course[]      @relation("InstructorCourses")
   sentFriendRequests   Friendship[]  @relation("Requesters")
   receivedFriendRequests Friendship[]  @relation("Addressees")
+  lists                  List[]        
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
 }
@@ -37,6 +38,7 @@ model Course {
   modules     Module[]
   enrollments Enrollment[]
   courseTopics CourseTopic[]
+  listCourses  ListCourse[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -137,4 +139,37 @@ model CourseTopic {
   createdAt  DateTime  @default(now())
 
   @@id([courseId, topicId])
+}
+
+model List {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  type        ListType    @default(CUSTOM)
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+  listCourses ListCourse[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+enum ListType {
+  CUSTOM        
+  FAVORITES     
+  WATCH_LATER   
+}
+
+model ListCourse {
+  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId    String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+  addedAt   DateTime @default(now())
+  order     Int?     // Ordem do curso na lista (opcional)
+
+  @@id([listId, courseId])
+  @@index([listId])
+  @@index([courseId])
 }

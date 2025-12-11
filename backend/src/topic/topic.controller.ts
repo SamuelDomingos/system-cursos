@@ -1,6 +1,7 @@
 import { Controller, Post, Get, Param, Query, Body, UseGuards } from '@nestjs/common';
 import { TopicService } from './topic.service';
 import { CreateTopicDto, AddCourseToTopicDto } from './dto/topic.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('topics')
@@ -15,24 +16,17 @@ export class TopicController {
 
     @Get()
     findAll(
-        @Query('page') page = 1,
-        @Query('limit') limit = 10,
+        @Query('page') topicPage = 1,
+        @Query('limit') topicLimit = 10,
+        @Query('coursePage') coursePage?: number,
+        @Query('courseLimit') courseLimit?: number,
     ) {
-        return this.topicsService.findAll(Number(page), Number(limit));
+        return this.topicsService.findAll(Number(topicPage), Number(topicLimit), Number(coursePage), Number(courseLimit));
     }
 
     @Post('add-course')
     @UseGuards(AuthGuard('jwt'))
     addCourseToTopic(@Body() dto: AddCourseToTopicDto) {
         return this.topicsService.addCourseToTopic(dto);
-    }
-
-    @Get(':slug/courses')
-    findCoursesByTopic(
-        @Param('slug') slug: string,
-        @Query('page') page = 1,
-        @Query('limit') limit = 10,
-    ) {
-        return this.topicsService.findCoursesByTopic(slug, Number(page), Number(limit));
     }
 }

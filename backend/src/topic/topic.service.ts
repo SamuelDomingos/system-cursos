@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTopicDto, AddCourseToTopicDto } from './dto/topic.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class TopicService {
@@ -10,30 +11,48 @@ export class TopicService {
     return this.prisma.topic.create({ data: dto });
   }
 
-  async findAll(page = 1, limit = 10) {
-    return this.prisma.topic.findMany({
+  async findAll(
+    topicPage = 1,
+    topicLimit = 10,
+    coursePage?: number,
+    courseLimit?: number,
+  ) {
+    const topicTotal = await this.prisma.topic.count();
+
+    const topics = await this.prisma.topic.findMany({
       include: {
         courses: {
-          include: {
-            course: {
-              select: {
-                id: true,
-                title: true,
-                description: true,
-                thumbnail: true,
-                price: true,
-                duration: true,
-                tags: true,
-                instructor: { select: { id: true, name: true } },
-              },
-            },
-          },
+          include: { course: true },
           orderBy: { relevance: 'desc' },
-          skip: (page - 1) * limit,
-          take: limit,
+          ...(coursePage !== undefined && courseLimit !== undefined && {
+            skip: (coursePage - 1) * courseLimit,
+            take: courseLimit,
+          }),
         },
       },
+      skip: (topicPage - 1) * topicLimit,
+      take: topicLimit,
     });
+
+    const topicsWithCourseCount = await Promise.all(
+    topics.map(async (topic) => {
+      const courseTotal = await this.prisma.course.count({
+        where: { id: topic.id },
+      });
+      return {
+        ...topic,
+        courseTotal,
+      };
+    })
+  );
+
+    return {
+      topics: topicsWithCourseCount,
+      topicTotal,
+      topicPage,
+      topicLimit,
+      topicTotalPages: Math.ceil(topicTotal / topicLimit),
+    };
   }
 
   async addCourseToTopic(dto: AddCourseToTopicDto) {
@@ -51,34 +70,4 @@ export class TopicService {
     });
   }
 
-  async findCoursesByTopic(topicSlug: string, page = 1, limit = 10) {
-    const topic = await this.prisma.topic.findUnique({
-      where: { slug: topicSlug },
-      include: {
-        courses: {
-          include: {
-            course: {
-              select: {
-                id: true,
-                title: true,
-                description: true,
-                thumbnail: true,
-                price: true,
-                duration: true,
-                tags: true,
-                instructor: { select: { id: true, name: true } },
-              },
-            },
-          },
-          orderBy: { relevance: 'desc' },
-          skip: (page - 1) * limit,
-          take: limit,
-        },
-      },
-    });
-
-    if (!topic) throw new NotFoundException('Tópico não encontrado');
-
-    return topic;
-  }
 }
