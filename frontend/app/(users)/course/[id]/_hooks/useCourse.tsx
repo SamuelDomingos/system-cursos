@@ -2,13 +2,13 @@ import { useFetch } from "@/hooks/useFetch";
 import { findCourseById } from "@/lib/api/courses/courses";
 import { useMemo } from "react";
 
-export const useCourse = (id: string) => {
+export const useCourse = (id: string, userId: string) => {
 
   const fetchOptions = useMemo(() => ({
     auto: !!id,
-    defaultArgs: [id],
+    defaultArgs: [id, userId],
     errorMessage: "Erro ao carregar o curso.",
-  }), [id]);
+  }), [id, userId]);
 
   const {
     execute: fetchCourse,

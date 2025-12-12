@@ -31,7 +31,7 @@ export function TopicCard({
   const imageSrc = course.thumbnail ? `${API_BASE_URL}${course.thumbnail}` : "https://via.placeholder.com/150";
 
   return (
-    <Link href={`/cursor/${course.id}`}>
+    <Link href={`/course/${course.id}`}>
       <Card className="group w-[360px] h-[250px] flex flex-col justify-between relative overflow-hidden cursor-pointer">
       <div className="absolute inset-0 flex items-center justify-center">
           <Image

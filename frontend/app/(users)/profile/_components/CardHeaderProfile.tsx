@@ -2,13 +2,12 @@ import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Pencil } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUpdateProfile } from "../_hooks/useuProfile";
+import { useProfile } from "../_hooks/useuProfile";
 import { type ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 
 export const CardHeaderProfile = () => {
-  const { updateProfile, isLoading, error } = useUpdateProfile();
+  const { updateProfile, isLoading, error } = useProfile();
   const { user } = useAuth();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {

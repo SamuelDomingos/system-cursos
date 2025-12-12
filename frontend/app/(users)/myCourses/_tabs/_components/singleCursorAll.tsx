@@ -32,7 +32,7 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {;
   return (
     <Card className="group w-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
-        <Link href={`/cursor/${course.course.id}`} className="block">
+        <Link href={`/course/${course.course.id}`} className="block">
           <Image
             src={imageSrc}
             alt={course.course.title}

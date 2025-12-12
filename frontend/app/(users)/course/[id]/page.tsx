@@ -9,10 +9,12 @@ import CourseContent from "./_components/CourseContent";
 import ReviewsSection from "./_components/ReviewsSection";
 
 import { Spinner } from "@/components/ui/spinner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const CursorPage = () => {
   const { id } = useParams();
-  const { course, isLoading } = useCourse(id as string);
+  const { user } = useAuth();
+  const { course, isLoading } = useCourse(id as string, user?.id as string);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const imageSrc = course?.thumbnail

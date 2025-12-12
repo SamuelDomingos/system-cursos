@@ -118,7 +118,7 @@ export class CoursesService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, userId: string) {
     const course = await this.prisma.course.findUnique({
       where: { id },
       include: {
@@ -130,7 +130,15 @@ export class CoursesService {
     });
 
     if (!course) throw new NotFoundException('Curso não encontrado');
-    return course;
+
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { userId, courseId: id },
+    });
+
+    return {
+      ...course,
+      userHasCourse: !!enrollment,
+    };
   }
 
   async findUserAvailableCourse(userId: string, courseId: string) {

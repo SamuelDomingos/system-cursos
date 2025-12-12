@@ -49,12 +49,15 @@ export class CoursesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.coursesService.findOne(id);
+  findOne(
+    @Param('id') id: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.coursesService.findOne(id, userId);
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('thumbnail', multerConfig)) 
+  @UseInterceptors(FileInterceptor('thumbnail', multerConfig))
   @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
