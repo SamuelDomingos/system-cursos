@@ -1,7 +1,6 @@
-import { Controller, Post, Get, Param, Query, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Query, Body, UseGuards } from '@nestjs/common';
 import { TopicService } from './topic.service';
 import { CreateTopicDto, AddCourseToTopicDto } from './dto/topic.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('topics')

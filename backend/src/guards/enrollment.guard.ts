@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../modules/prisma/prisma.service';
 
 @Injectable()
 export class EnrollmentGuard implements CanActivate {

@@ -7,7 +7,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 export class EnrollmentsService {
   constructor(private prisma: PrismaService) { }
 
-  async create(dto: CreateEnrollmentDto) {
+  async _create(dto: CreateEnrollmentDto) {
     const { userId, courseId } = dto;
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -88,10 +88,4 @@ export class EnrollmentsService {
     };
   }
 
-  async findCourseEnrollments(courseId: string) {
-    return this.prisma.enrollment.findMany({
-      where: { courseId },
-      include: { user: { select: { id: true, name: true, email: true } } },
-    });
-  }
 }

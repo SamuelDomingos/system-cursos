@@ -2,6 +2,7 @@ import { Controller, Get, Param, Delete, Patch, Body, UseGuards, Query } from '@
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { UserOwnership } from 'src/guards/UserOwnership.guard';
 
 @Controller('users')
 export class UsersController {
@@ -15,12 +16,14 @@ export class UsersController {
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'))
+  @UserOwnership('id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findOneById(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
+  @UserOwnership('id')
   async update(
     @Param('id') id: string,
     @Body() body: { email?: string; name?: string; password?: string; avatar?: string },
@@ -30,6 +33,7 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
+  @UserOwnership('id')
   async remove(@Param('id') id: string) {
     await this.usersService.delete(id);
     return { message: 'Usuário removido com sucesso' };

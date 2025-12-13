@@ -17,6 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateCourseDto, UpdateCourseDto } from './dto/courses.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { multerConfig } from 'src/config/multer.config';
+import { UserOwnership } from 'src/guards/UserOwnership.guard';
 
 @Controller('courses')
 export class CoursesController {
@@ -25,6 +26,7 @@ export class CoursesController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('thumbnail', multerConfig))
   @UseGuards(AuthGuard('jwt'))
+  @UserOwnership('userId')
   create(@Body() createCourseDto: CreateCourseDto,
     @UploadedFile() file: Express.Multer.File,) {
     const thumbnailUrl = `/uploads/${file.filename}`;
@@ -41,6 +43,7 @@ export class CoursesController {
   }
 
   @Get(':userId/watch/:courseId')
+  @UserOwnership('userId')
   findUserAvailableCourse(
     @Param('userId') userId: string,
     @Param('courseId') courseId: string,
@@ -48,17 +51,10 @@ export class CoursesController {
     return this.coursesService.findUserAvailableCourse(userId, courseId);
   }
 
-  @Get(':id')
-  findOne(
-    @Param('id') id: string,
-    @Param('userId') userId: string,
-  ) {
-    return this.coursesService.findOne(id, userId);
-  }
-
   @Patch(':id')
   @UseInterceptors(FileInterceptor('thumbnail', multerConfig))
   @UseGuards(AuthGuard('jwt'))
+  @UserOwnership('userId')
   update(
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
@@ -73,6 +69,7 @@ export class CoursesController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
+  @UserOwnership('userId')
   remove(@Param('id') id: string) {
     return this.coursesService.remove(id);
   }

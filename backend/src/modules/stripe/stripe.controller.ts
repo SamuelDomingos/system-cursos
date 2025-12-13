@@ -84,7 +84,7 @@ export class StripeController {
       }
 
       for (const courseId of courseIds) {
-        await this.enrollmentsService.create({
+        await this.enrollmentsService._create({
           userId,
           courseId,
         });

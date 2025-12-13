@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto/courses.dto';
-import { PaginationDto } from '../common/dto/pagination.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 
 @Injectable()
 export class CoursesService {
@@ -116,29 +116,6 @@ export class CoursesService {
         instructor: { select: { id: true, name: true, email: true } },
       },
     });
-  }
-
-  async findOne(id: string, userId: string) {
-    const course = await this.prisma.course.findUnique({
-      where: { id },
-      include: {
-        instructor: { select: { id: true, name: true, avatar: true } },
-        modules: {
-          include: { lessons: true },
-        },
-      },
-    });
-
-    if (!course) throw new NotFoundException('Curso não encontrado');
-
-    const enrollment = await this.prisma.enrollment.findFirst({
-      where: { userId, courseId: id },
-    });
-
-    return {
-      ...course,
-      userHasCourse: !!enrollment,
-    };
   }
 
   async findUserAvailableCourse(userId: string, courseId: string) {
