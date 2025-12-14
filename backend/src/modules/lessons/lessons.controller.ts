@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { LessonsService } from './lessons.service';
 import { AuthGuard } from '@nestjs/passport';
-import { EnrollmentGuard } from 'src/auth/guards/enrollment.guard';
-import { CreateLessonDto, UpdateLessonDto } from './dto/lessons.dto';
+import { EnrollmentGuard } from 'src/guards/enrollment.guard';
+import { CreateManyLessonsDto, UpdateLessonDto } from './dto/lessons.dto';
 
 @Controller('lessons')
 export class LessonsController {
@@ -20,13 +20,8 @@ export class LessonsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Body() createLessonDto: CreateLessonDto) {
-    return this.lessonsService.create(createLessonDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.lessonsService.findAll();
+  create(@Body() CreateManyLessonsDto: CreateManyLessonsDto) {
+    return this.lessonsService.create(CreateManyLessonsDto);
   }
 
   @Get(':id')

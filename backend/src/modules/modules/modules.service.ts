@@ -1,31 +1,41 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateModuleDto, UpdateModuleDto } from './dto/modules.dto';
+import { CreateManyModulesDto, UpdateModuleDto } from './dto/modules.dto';
 
 @Injectable()
 export class ModulesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async create(data: CreateModuleDto) {
-    const course = await this.prisma.course.findUnique({
-      where: { id: data.courseId },
-    });
+  async create(data: CreateManyModulesDto) {
+    const createdModules: any[] = [];
 
-    if (!course) throw new NotFoundException('Curso não encontrado');
+    for (const moduleData of data.modules) {
+      const course = await this.prisma.course.findUnique({
+        where: { id: moduleData.courseId },
+      });
 
-    return this.prisma.module.create({
-      data: {
-        title: data.title,
-        courseId: data.courseId,
-      },
-      include: { course: { select: { id: true, title: true } } },
-    });
+      if (!course) {
+        throw new NotFoundException(
+          `Curso com ID ${moduleData.courseId} não encontrado`,
+        );
+      }
+
+      const createdModule = await this.prisma.module.create({
+        data: {
+          title: moduleData.title,
+          courseId: moduleData.courseId,
+        },
+        include: { course: { select: {  title: true } } },
+      });
+      createdModules.push(createdModule);
+    }
+    return createdModules;
   }
 
   async findAll() {
     return this.prisma.module.findMany({
       include: {
-        course: { select: { id: true, title: true } },
+        course: { select: { title: true } },
         lessons: true,
       },
     });
@@ -35,7 +45,7 @@ export class ModulesService {
     const module = await this.prisma.module.findUnique({
       where: { id },
       include: {
-        course: { select: { id: true, title: true } },
+        course: { select: { title: true } },
         lessons: true,
       },
     });
@@ -50,8 +60,11 @@ export class ModulesService {
 
     return this.prisma.module.update({
       where: { id },
-      data,
-      include: { course: { select: { id: true, title: true } } },
+      data: {
+        title: data.title,
+        ...(data.courseId !== undefined && { courseId: data.courseId }),
+      },
+      include: { course: { select: { title: true } } },
     });
   }
 

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/app/auth/_hooks/useAuth";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 interface AuthFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   type: "login" | "register";
@@ -21,16 +23,17 @@ interface AuthFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   buttonText: string;
 }
 
-export function AuthForm({ 
-  className, 
+export function AuthForm({
+  className,
   type,
   title,
   description,
   buttonText,
-  ...props 
+  ...props
 }: AuthFormProps) {
   const { form, handleSubmit, isLoading } = useAuth(type);
   const isLogin = type === "login";
+  const [show, setShow] = useState(false);
 
   return (
     <Form {...form}>
@@ -54,7 +57,11 @@ export function AuthForm({
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your Name" {...field} value={field.value || ""} />
+                  <Input
+                    placeholder="Your Name"
+                    {...field}
+                    value={field.value || ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -79,27 +86,42 @@ export function AuthForm({
         <FormField
           control={form.control}
           name="password"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center">
-                <FormLabel>Password</FormLabel>
-                {isLogin && (
-                  <Link
-                    href="#"
-                    className="ml-auto text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                )}
-              </div>
-              <FormControl>
-                <Input type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <div className="flex items-center">
+                  <FormLabel>Password</FormLabel>
+                  {isLogin && (
+                    <Link
+                      href="#"
+                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </Link>
+                  )}
+                </div>
+                <FormControl>
+                  <div className="relative">
+                    <Input type={show ? "text" : "password"} {...field} />
+                    <button
+                      type="button"
+                      onClick={() => setShow((s) => !s)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      aria-label={show ? "Hide password" : "Show password"}
+                    >
+                      {show ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
-
         {!isLogin && (
           <FormField
             control={form.control}

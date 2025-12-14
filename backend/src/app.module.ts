@@ -13,7 +13,6 @@ import { LessonsController } from './modules/lessons/lessons.controller';
 import { EnrollmentsController } from './modules/enrollments/enrollments.controller';
 import { EnrollmentsService } from './modules/enrollments/enrollments.service';
 import { ProgressService } from './modules/progress/progress.service';
-import { ProgressController } from './modules/progress/progress.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { FriendshipController } from './modules/friendship/friendship.controller';
 import { FriendshipService } from './modules/friendship/friendship.service';
@@ -31,7 +30,7 @@ import { StripeModule } from './modules/stripe/stripe.module';
   }),
   FriendshipModule, TopicModule, StripeModule,
   ],
-  controllers: [ModulesController, LessonsController, EnrollmentsController, ProgressController, FriendshipController],
+  controllers: [ModulesController, LessonsController, EnrollmentsController, FriendshipController],
   providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService],
 })
 export class AppModule { }

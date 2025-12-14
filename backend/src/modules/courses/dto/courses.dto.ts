@@ -38,6 +38,8 @@ export class CreateCourseDto {
   @IsEnum(CourseStatus)
   @IsOptional()
   status?: CourseStatus;
+
+
 }
 
-export class UpdateCourseDto extends PartialType(CreateCourseDto) {}
+export class UpdateCourseDto extends PartialType(CreateCourseDto) { }

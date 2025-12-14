@@ -5,7 +5,9 @@ import { PaginationDto } from '../../common/dto/pagination.dto';
 
 @Injectable()
 export class CoursesService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+  ) { }
 
   private toSlug(s: string) {
     return s
@@ -113,9 +115,32 @@ export class CoursesService {
       skip: (page - 1) * limit,
       take: limit,
       include: {
-        instructor: { select: { id: true, name: true, email: true } },
+        instructor: { select: {name: true, avatar: true } },
       },
     });
+  }
+
+  async findOne(id: string, userId: string) {
+    const course = await this.prisma.course.findUnique({
+      where: { id },
+      include: {
+        instructor: { select: {name: true, avatar: true } },
+        modules: {
+          include: { lessons: true },
+        },
+      },
+    });
+
+    if (!course) throw new NotFoundException('Curso não encontrado');
+
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { userId, courseId: id },
+    });
+
+    return {
+      ...course,
+      userHasCourse: !!enrollment,
+    };
   }
 
   async findUserAvailableCourse(userId: string, courseId: string) {
@@ -159,9 +184,11 @@ export class CoursesService {
       }
     }
 
+    const { instructorId, ...updateData } = data;
+
     const updated = await this.prisma.course.update({
       where: { id },
-      data,
+      data: updateData,
       include: {
         instructor: { select: { id: true, name: true } },
       },

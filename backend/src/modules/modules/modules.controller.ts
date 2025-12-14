@@ -6,12 +6,11 @@ import {
   Param,
   Delete,
   Patch,
-  ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
 import { ModulesService } from './modules.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateModuleDto, UpdateModuleDto } from './dto/modules.dto';
+import { CreateManyModulesDto, UpdateModuleDto } from './dto/modules.dto';
 
 @Controller('modules')
 export class ModulesController {
@@ -19,8 +18,8 @@ export class ModulesController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))  
-  create(@Body() createModuleDto: CreateModuleDto) {
-    return this.modulesService.create(createModuleDto);
+  create(@Body() CreateManyModulesDto: CreateManyModulesDto) {
+    return this.modulesService.create(CreateManyModulesDto);
   }
 
   @Get()
