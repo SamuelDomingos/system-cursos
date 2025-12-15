@@ -14,6 +14,7 @@ export default function PriceCard({
   course: any;
 }) {
   const { addItemToCart } = useCart();
+  
   return (
     <div>
       <div className="lg:hidden container mx-auto px-6 -mt-6 relative z-10">
@@ -78,7 +79,7 @@ export default function PriceCard({
             {course.userHasCourse === true ? (
               <Button className="w-full mb-2 text-white text-lg py-6 mb-8 mt-4">
                 <Link
-                  href={`/course/${course.id}/learn/1`}
+                  href={`/course/${course.id}/learn/${course.lastLessonId}`}
                 >
                   Assistir Aula
                 </Link>

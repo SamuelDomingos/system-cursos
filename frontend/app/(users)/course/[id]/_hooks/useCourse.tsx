@@ -17,6 +17,9 @@ export const useCourse = (id: string, userId: string) => {
     error,
   } = useFetch(findCourseById, fetchOptions);
 
+  console.log(course);
+  
+
   return {
     fetchCourse,
     course,

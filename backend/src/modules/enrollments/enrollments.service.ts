@@ -2,10 +2,14 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEnrollmentDto } from './dto/enrollment.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { LessonsService } from '../lessons/lessons.service';
 
 @Injectable()
 export class EnrollmentsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private lessonsService: LessonsService
+  ) { }
 
   async _create(dto: CreateEnrollmentDto) {
     const { userId, courseId } = dto;
@@ -66,6 +70,7 @@ export class EnrollmentsService {
         });
 
         const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+        const lastLessonId = await this.lessonsService._findLastUserLessonId(userId, course.id);
 
         return {
           course: course,
@@ -74,6 +79,7 @@ export class EnrollmentsService {
             completedLessons,
             progressPercentage,
             totalWatchTime: totalWatchTime._sum.watchTime || 0,
+            lastLessonId,
           },
         };
       })

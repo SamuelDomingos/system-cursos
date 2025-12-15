@@ -2,11 +2,13 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto/courses.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
+import { LessonsService } from '../lessons/lessons.service';
 
 @Injectable()
 export class CoursesService {
   constructor(
     private prisma: PrismaService,
+    private lessonsService: LessonsService
   ) { }
 
   private toSlug(s: string) {
@@ -115,7 +117,7 @@ export class CoursesService {
       skip: (page - 1) * limit,
       take: limit,
       include: {
-        instructor: { select: {name: true, avatar: true } },
+        instructor: { select: { name: true, avatar: true } },
       },
     });
   }
@@ -124,9 +126,22 @@ export class CoursesService {
     const course = await this.prisma.course.findUnique({
       where: { id },
       include: {
-        instructor: { select: {name: true, avatar: true } },
+        instructor: { select: { name: true, avatar: true } },
         modules: {
-          include: { lessons: true },
+          select:
+          {
+            title: true,
+            createdAt: true,
+            updatedAt: true,
+            lessons: {
+              select: {
+                title: true,
+                content: true,
+                createdAt: true,
+                updatedAt: true,
+              }
+            },
+          },
         },
       },
     });
@@ -136,9 +151,11 @@ export class CoursesService {
     const enrollment = await this.prisma.enrollment.findFirst({
       where: { userId, courseId: id },
     });
+    const lastLessonId = await this.lessonsService._findLastUserLessonId(userId, course.id);
 
     return {
       ...course,
+      lastLessonId,
       userHasCourse: !!enrollment,
     };
   }

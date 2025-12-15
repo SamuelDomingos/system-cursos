@@ -8,6 +8,7 @@ export type Course = {
   thumbnail?: string;
   instructor: Pick<User, 'id' | 'name'>;
   modules: Module[];
+  lastLessonId: string;
 };
 
 export type CourseSingleUser = {

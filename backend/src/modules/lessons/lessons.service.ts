@@ -111,4 +111,41 @@ export class LessonsService {
     await this.prisma.lesson.delete({ where: { id } });
     return { message: 'Lição deletada com sucesso' };
   }
+  
+  async _findLastUserLessonId(userId: string, courseId: string): Promise<string | null> {
+    const lastProgress = await this.prisma.progress.findFirst({
+      where: {
+        userId,
+        lesson: {
+          module: {
+            courseId: courseId,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      select: {
+        lessonId: true,
+      },
+    });
+
+    if (lastProgress?.lessonId) return lastProgress.lessonId;
+
+    const firstModule = await this.prisma.module.findFirst({
+      where: { courseId: courseId },
+      orderBy: { id: 'asc' },
+      select: { id: true },
+    });
+
+    if (!firstModule) return null;
+
+    const firstLesson = await this.prisma.lesson.findFirst({
+      where: { moduleId: firstModule.id },
+      orderBy: { id: 'asc' },
+      select: { id: true },
+    });
+
+    return firstLesson?.id || null;
+  }
 }
