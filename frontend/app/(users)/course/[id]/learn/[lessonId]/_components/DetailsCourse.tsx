@@ -12,14 +12,12 @@ import {
 } from "lucide-react";
 
 export const DetailsCourse = ({ courseData }: { courseData: any }) => {
+  console.log(courseData);
+
   return (
     <div className="flex-1">
       <div className="max-w-5xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-2">{courseData.title}</h1>
-        <p className=" mb-4">
-          Aprenda TUDO que você precisa para entrar ou crescer em uma das áreas
-          com MAIORES SALÁRIOS dentro do Marketing Digital
-        </p>
 
         <div className="flex items-center gap-6 mb-6 flex-wrap">
           <div className="flex items-center gap-2">
@@ -31,7 +29,7 @@ export const DetailsCourse = ({ courseData }: { courseData: any }) => {
           </div>
           <div className="flex items-center gap-2 text-sm ">
             <Users className="w-4 h-4" />
-            {courseData.students.toLocaleString()} alunos
+            {/* {courseData.students.toLocaleString()} alunos */}
           </div>
           <div className="flex items-center gap-2 text-sm ">
             <Clock className="w-4 h-4" />
@@ -39,7 +37,11 @@ export const DetailsCourse = ({ courseData }: { courseData: any }) => {
           </div>
           <div className="flex items-center gap-2 text-sm ">
             <FileText className="w-4 h-4" />
-            {courseData.lessons} aulas
+            {courseData.modules.reduce(
+              (acc: number, m: any) => acc + m.lessons.length,
+              0
+            )}{" "}
+            aulas
           </div>
         </div>
 
@@ -57,16 +59,7 @@ export const DetailsCourse = ({ courseData }: { courseData: any }) => {
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg mb-3">Descrição</h3>
-                <p className=" leading-relaxed">
-                  Uma das áreas do Marketing Digital que mais estão com vagas
-                  abertas e em busca de bons profissionais é a de Gestor de
-                  Tráfego, e que, algumas empresas e agências também chamam de
-                  Mídia Digital de Performance.
-                </p>
-                <p className=" leading-relaxed mt-4">
-                  Esse profissional precisa DOMINAR 3 áreas fundamentais para
-                  ter sucesso na profissão e se destacar no mercado.
-                </p>
+                <p className=" leading-relaxed">{courseData.description}</p>
               </CardContent>
             </Card>
 

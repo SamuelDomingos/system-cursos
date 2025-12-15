@@ -1,209 +1,53 @@
-import { Play, Check, Clock, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Play, Check, Clock } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
-export const SidebarCourse = ({
-  courseData,
-}: {
-  courseData: { lessons: number; totalHours: number };
-}) => {
-  const [activeLesson, setActiveLesson] = useState(0);
-  const [expandedSections, setExpandedSections] = useState([0]);
-  
-  const sections = [
-    {
-      title:
-        "Seção 1: Os 3 Pilares que o Gestor de Tráfego Pago precisa Dominar!",
-      duration: "11.4m",
-      lessons: [
-        {
-          title: "Os 3 Pilares que o Gestor de Tráfego Pago precisa Dominar!",
-          duration: "4m",
-          completed: true,
-          current: true,
-        },
-      ],
-    },
-    {
-      title: "Seção 2: Não Pule, essas informações são importantes!",
-      duration: "11.0m",
-      lessons: [
-        {
-          title: "Introdução às informações essenciais",
-          duration: "6m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Por que você não pode pular esta seção",
-          duration: "5m",
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-    {
-      title: "Seção 3: Tráfego Pago (Google Ads e Youtube Ads)",
-      duration: "8h 12min",
-      lessons: [
-        {
-          title: "Introdução ao Google Ads",
-          duration: "12m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Configuração da primeira campanha",
-          duration: "18m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Youtube Ads - Primeiros Passos",
-          duration: "15m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Otimização de campanhas",
-          duration: "22m",
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-    {
-      title: "Seção 4: Tráfego Pago (Facebook Ads e Instagram Ads)",
-      duration: "8h 53min",
-      lessons: [
-        {
-          title: "Gerenciador de Anúncios do Facebook",
-          duration: "14m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Criando sua primeira campanha",
-          duration: "16m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Instagram Ads - Estratégias",
-          duration: "19m",
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-    {
-      title:
-        "Seção 5: Conversão Online (Copywriting, Neuromarketing e Gatilhos Mentais)",
-      duration: "5h 28min",
-      lessons: [
-        {
-          title: "Fundamentos do Copywriting",
-          duration: "20m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Gatilhos Mentais que Convertem",
-          duration: "25m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Neuromarketing Aplicado",
-          duration: "18m",
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-    {
-      title: "Seção 6: Google Analytics 4 (GA4)",
-      duration: "3h 16min",
-      lessons: [
-        {
-          title: "Introdução ao GA4",
-          duration: "10m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Configuração inicial",
-          duration: "15m",
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-    {
-      title: "Seção 7: Próximos Passos!",
-      duration: "11.6m",
-      lessons: [
-        {
-          title: "Recapitulação do curso",
-          duration: "6m",
-          completed: false,
-          current: false,
-        },
-        {
-          title: "Próximos passos na sua carreira",
-          duration: "5m",
-          completed: false,
-          current: false,
-        },
-      ],
-    },
-  ];
-
-  const toggleSection = (index: number) => {
-    setExpandedSections((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-  };
+export const SidebarCourse = ({ courseData }: { courseData: any }) => {
+  const { id } = useParams();
 
   return (
     <div className="w-96 border-l border-muted flex flex-col">
       <div className="p-4 border-b border-muted">
         <h2 className="font-semibold text-lg">Conteúdo do curso</h2>
         <p className="text-sm  mt-1">
-          {sections.length} seções • {courseData.lessons} aulas •{" "}
-          {courseData.totalHours}h de duração total
+          {courseData.modules.length} seções •{" "}
+          {courseData.modules.reduce(
+            (acc: number, m: any) => acc + m.lessons.length,
+            0
+          )}{" "}
+          aulas • {/* {courseData.totalHours}h de duração total */}
         </p>
       </div>
 
       <div className="flex-1 overflow-auto">
-        {sections.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="border-b border-border">
-            <button
-              onClick={() => toggleSection(sectionIndex)}
-              className="w-full px-4 py-3 flex items-center justify-between hover:bg-muted transition-colors"
+        <Accordion type="multiple">
+          {courseData.modules.map((module: any, moduleIndex: number) => (
+            <AccordionItem
+              key={module.id}
+              value={module.id}
             >
-              <div className="flex-1 text-left">
-                <div className="font-medium text-sm text-foreground">
-                  {section.title}
+              <AccordionTrigger className="w-full px-4 hover:bg-muted transition-colors">
+                <div className="flex flex-col items-start">
+                  <div className="font-medium text-sm text-foreground">
+                    {`${moduleIndex + 1}. ${module.title}`}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {module.lessons.length} aulas •
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {section.lessons.length} aulas • {section.duration}
-                </div>
-              </div>
-              {expandedSections.includes(sectionIndex) ? (
-                <ChevronUp className="w-5 h-5 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-muted-foreground" />
-              )}
-            </button>
-            {expandedSections.includes(sectionIndex) && (
-              <div className="bg-background">
-                {section.lessons.map((lesson, lessonIndex) => (
-                  <button
-                    key={lessonIndex}
-                    onClick={() => setActiveLesson(lessonIndex)}
-                    className={`w-full px-6 py-3 flex items-center gap-3 hover:bg-muted transition-colors ${
-                      lesson.current ? "bg-muted border-l-4 border-primary" : ""
-                    }`}
+              </AccordionTrigger>
+              <AccordionContent className="bg-background">
+                {module.lessons.map((lesson: any, lessonIndex: number) => (
+                  <Link
+                    href={`/course/${id}/learn/${lesson.id}`}
+                    key={lesson.id}
+                    className="flex items-center gap-3 py-2 px-4 hover:bg-accent transition-colors cursor-pointer"
                   >
                     <div className="shrink-0">
                       {lesson.completed ? (
@@ -222,19 +66,19 @@ export const SidebarCourse = ({
                     </div>
                     <div className="flex-1 text-left">
                       <div className="text-sm font-medium text-foreground">
-                        {lesson.title}
+                        {`${lessonIndex + 1}. ${lesson.title}`}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
                         <Clock className="w-3 h-3" />
                         {lesson.duration}
                       </div>
                     </div>
-                  </button>
+                  </Link>
                 ))}
-              </div>
-            )}
-          </div>
-        ))}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </div>
   );

@@ -4,17 +4,19 @@ import { User } from '@/lib/api/types/users';
 import { cookies } from '@/utils/cookies';
 
 export const login = async (credentials: LoginRequest): Promise<User> => {
-    const response = await http.post<{ access_token: string, user: User }>('/auth/login', credentials);
-    const userWithIdAsString = { ...response.user, id: String(response.user.id) };
-    cookies.set('token', response.access_token, 7);
+    const response = await http.post<User & { access_token: string }>('/auth/login', credentials);
+    const { access_token, ...userData } = response;
+    const userWithIdAsString = { ...userData, id: String(userData.id) };
+    cookies.set('token', access_token, 7);
     cookies.set('user', JSON.stringify(userWithIdAsString), 7);
     return userWithIdAsString;
 };
 
 export const register = async (credentials: RegisterRequest): Promise<User> => {
-    const response = await http.post<{ access_token: string, user: User }>('/auth/register', credentials);
-    const userWithIdAsString = { ...response.user, id: String(response.user.id) };
-    cookies.set('token', response.access_token, 7);
+    const response = await http.post<User & { access_token: string }>('/auth/register', credentials);
+    const { access_token, ...userData } = response;
+    const userWithIdAsString = { ...userData, id: String(userData.id) };
+    cookies.set('token', access_token, 7);
     cookies.set('user', JSON.stringify(userWithIdAsString), 7);
     return userWithIdAsString;
 };

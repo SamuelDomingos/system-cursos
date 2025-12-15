@@ -1,14 +1,13 @@
 import http from '@/utils/http';
-import { PaginatedResponse } from '@/lib/api/types/pagination';
-import { Lesson } from '@/lib/api/types/lessons';
+import { Lesson, LessonDetailsResponse } from '@/lib/api/types/lessons';
 
 export const createLessons = async (dto: Lesson): Promise<Lesson> => {
   const result = await http.post<Lesson>('/lessons', dto);
   return result;
 };
 
-export const findLessonById = async (id: string): Promise<Lesson> => {
-  const result = await http.get<Lesson>(`/lessons/${id}`);
+export const findLessonById = async (id: string): Promise<LessonDetailsResponse> => {
+  const result = await http.get<LessonDetailsResponse>(`/lessons/${id}`);
   return result;
 };
 
