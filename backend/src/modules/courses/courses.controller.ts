@@ -17,7 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateCourseDto, UpdateCourseDto } from './dto/courses.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { multerConfig } from 'src/config/multer.config';
-import { UserOwnership, UserOwnershipGuard } from 'src/guards/UserOwnership.guard';
+import { UserOwnershipGuard } from 'src/guards/UserOwnership.guard';
 
 @Controller('courses')
 export class CoursesController {
@@ -25,7 +25,7 @@ export class CoursesController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('thumbnail', multerConfig))
-  @UseGuards(AuthGuard('jwt'), UserOwnershipGuard)
+  @UseGuards(AuthGuard('jwt'))
   create(@Body() createCourseDto: CreateCourseDto,
     @UploadedFile() file: Express.Multer.File,) {
     const thumbnailUrl = `/uploads/${file.filename}`;
@@ -60,7 +60,7 @@ export class CoursesController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('thumbnail', multerConfig))
-  @UseGuards(AuthGuard('jwt'), UserOwnershipGuard)
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,

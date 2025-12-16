@@ -73,13 +73,12 @@ export class EnrollmentsService {
         const lastLessonId = await this.lessonsService._findLastUserLessonId(userId, course.id);
 
         return {
-          course: course,
+          course: {lastLessonId, ...course},
           userProgress: {
             totalLessons,
             completedLessons,
             progressPercentage,
             totalWatchTime: totalWatchTime._sum.watchTime || 0,
-            lastLessonId,
           },
         };
       })

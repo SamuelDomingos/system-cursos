@@ -19,6 +19,9 @@ import { FriendshipService } from './modules/friendship/friendship.service';
 import { FriendshipModule } from './modules/friendship/friendship.module';
 import { TopicModule } from './modules/topic/topic.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { ListController } from './modules/list/list.controller';
+import { ListService } from './modules/list/list.service';
+import { ListModule } from './modules/list/list.module';
 
 @Module({
   imports: [CoursesModule, AuthModule, UsersModule, ConfigModule.forRoot(), PrismaModule, MulterModule.register({
@@ -28,9 +31,9 @@ import { StripeModule } from './modules/stripe/stripe.module';
     rootPath: join(__dirname, '..', '..', 'uploads'),
     serveRoot: '/uploads',
   }),
-  FriendshipModule, TopicModule, StripeModule,
+  FriendshipModule, TopicModule, StripeModule, ListModule,
   ],
-  controllers: [ModulesController, LessonsController, EnrollmentsController, FriendshipController],
-  providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService],
+  controllers: [ModulesController, LessonsController, EnrollmentsController, FriendshipController, ListController],
+  providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService, ListService],
 })
 export class AppModule { }

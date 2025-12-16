@@ -8,6 +8,7 @@ interface UseFetchOptions {
   errorMessage?: string;
   auto?: boolean;
   defaultArgs?: any[];
+  disableErrorMessage?: boolean;
 }
 
 export const useFetch = <TArgs extends any[], TResult>(
@@ -32,15 +33,17 @@ export const useFetch = <TArgs extends any[], TResult>(
         return result;
       } catch (err: any) {
         setError(err);
-        toast.error(options?.errorMessage || "Erro ao realizar a operação.", {
-          description: err.message || "Tente novamente mais tarde.",
-        });
+        if (!options?.disableErrorMessage) { // Verifica se a mensagem de erro não está desabilitada
+          toast.error(options?.errorMessage || "Erro ao realizar a operação.", {
+            description: err.message || "Tente novamente mais tarde.",
+          });
+        }
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [fetcher, options?.successMessage, options?.errorMessage]
+    [fetcher, options?.successMessage, options?.errorMessage, options?.disableErrorMessage]
   );
 
   useEffect(() => {

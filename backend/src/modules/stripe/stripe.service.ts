@@ -45,6 +45,48 @@ export class StripeService {
       throw new BadRequestException('Um ou mais cursos possui preço inválido');
     }
 
+    const courseIds = courses.map((c) => c.id);
+    const dbCourses = await this.prisma.course.findMany({
+      where: { id: { in: courseIds } },
+      select: { id: true, price: true },
+    });
+
+    if (dbCourses.length !== courseIds.length) {
+      throw new NotFoundException('Um ou mais cursos não foram encontrados');
+    }
+
+    const dbPriceMap = new Map(dbCourses.map((c) => [c.id, c.price]));
+    for (const course of courses) {
+      const dbPrice = dbPriceMap.get(course.id);
+      if (dbPrice === undefined || Number(course.price) !== Number(dbPrice)) {
+        throw new BadRequestException('Valor do curso inválido ou adulterado');
+      }
+    }
+
+    if (!dto.userId) {
+      throw new BadRequestException('ID do usuário é obrigatório para criar a sessão de checkout');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: dto.userId } });
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const existingEnrollments = await this.prisma.enrollment.findMany({
+      where: {
+        userId: dto.userId,
+        courseId: { in: courseIds },
+      },
+      select: { courseId: true },
+    });
+
+    if (existingEnrollments.length > 0) {
+      const enrolledCourseIds = existingEnrollments.map(e => e.courseId);
+      throw new BadRequestException(
+        `Usuário já está matriculado em um ou mais cursos: ${enrolledCourseIds.join(', ')}`,
+      );
+    }
+
     const lineItems = courses.map((course) => ({
       price_data: {
         product_data: {
@@ -60,16 +102,6 @@ export class StripeService {
     }));
 
     try {
-
-      if (!dto.userId) {
-        throw new BadRequestException('ID do usuário é obrigatório para criar a sessão de checkout');
-      }
-
-      const user = await this.prisma.user.findUnique({ where: { id: dto.userId } });
-      if (!user) {
-        throw new NotFoundException('Usuário não encontrado');
-      }
-
       const sessionParams: Stripe.Checkout.SessionCreateParams = {
         billing_address_collection: 'auto',
         line_items: lineItems,

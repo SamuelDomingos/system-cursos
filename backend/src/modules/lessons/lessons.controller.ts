@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Patch,
-  ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
 import { LessonsService } from './lessons.service';

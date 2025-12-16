@@ -24,7 +24,7 @@ export class TopicService {
         courses: {
           include: { course: true },
           orderBy: { relevance: 'desc' },
-          ...(coursePage !== undefined && courseLimit !== undefined && {
+          ...(typeof coursePage === 'number' && !isNaN(coursePage) && typeof courseLimit === 'number' && !isNaN(courseLimit) && {
             skip: (coursePage - 1) * courseLimit,
             take: courseLimit,
           }),
