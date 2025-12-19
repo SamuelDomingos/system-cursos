@@ -1,6 +1,6 @@
 import { useFetch } from "@/hooks/useFetch";
 import { useMutation } from "@/hooks/useMutation";
-import { createList, findAllList, updateList } from "@/lib/api/list";
+import { addCourseList, createList, findListsAll, updateList } from "@/lib/api/list";
 import { List } from "@/lib/api/types/list";
 import { useMemo } from "react";
 
@@ -12,13 +12,11 @@ export const useList = (userId?: string, listId?: string) => {
         data: lists,
         isLoading: isFetching,
         execute: refetch
-    } = useFetch(findAllList, {
+    } = useFetch(findListsAll, {
         auto: true,
         defaultArgs,
         disableErrorMessage: true,
     });
-
-    console.log(lists);
 
     const mutation = useMutation(
         async (data: List) => {
@@ -37,11 +35,26 @@ export const useList = (userId?: string, listId?: string) => {
         }
     );
 
+    const addCourseMutation = useMutation(
+        async ({ listId, courseId }: { listId: string; courseId: string }) => {
+            const result = addCourseList(listId, courseId)
+            return result;
+        },
+        {
+            successMessage: "Curso adicionado à lista com sucesso!",
+            onSuccess: () => {
+                refetch();
+            }
+        }
+    );
+
     return {
         onSubmit: mutation.mutate,
         isLoading: mutation.isLoading || isFetching,
         isEditMode,
         lists,
-        refetch
+        refetch,
+
+        addCourseMutation
     };
 };

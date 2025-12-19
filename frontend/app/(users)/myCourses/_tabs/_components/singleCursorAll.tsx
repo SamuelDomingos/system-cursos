@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
+  Check,
   Heart,
   MoreHorizontal,
   PlayCircle,
@@ -29,14 +30,15 @@ import Link from "next/link";
 import { useList } from "../_hooks/useList";
 import { useState } from "react";
 import { DialogCreateList } from "./dialogCreateList";
+import { cn } from "@/lib/utils";
 
 interface SingleCursorAllProps {
   course: CourseSingleUser;
 }
 
 const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
-  const { lists } = useList();
-  
+  const { lists, addCourseMutation } = useList();
+
   const [open, setOpen] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -69,12 +71,29 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end">
-            
             <DropdownMenuLabel>Listas</DropdownMenuLabel>
             <DropdownMenuGroup className="max-h-48 overflow-y-auto">
-              {lists?.map((list) => (
-                <DropdownMenuItem key={list.id}>{list.title}</DropdownMenuItem>
-              ))}
+              {lists?.map((list) => {
+                const isInList = list.listCourses?.some((c) => c.course.id === course.course.id);
+                return (
+                  <DropdownMenuItem
+                    key={list.id}
+                    onClick={() =>
+                      addCourseMutation.mutate({
+                        listId: list.id!,
+                        courseId: course.course.id!,
+                      })
+                    }
+                    className={cn(
+                      "cursor-pointer justify-between",
+                      isInList && "text-green-600"
+                    )}
+                  >
+                    {list.title}
+                    {isInList && <Check className="ml-2 h-4 w-4 text-green-600" />}
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />

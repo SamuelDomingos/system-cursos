@@ -19,6 +19,16 @@ export class ListController {
         return this.listService.findAll(req.user.id);
     }
 
+    @Get("/all")
+    findListsAll(@Req() req: any) {
+        return this.listService.findListsAll(req.user.id);
+    }
+
+    @Post("/add/:id")
+    addCourseList(@Param('id') id: string, @Req() req: any) {
+        return this.listService.addCourseList(req.user.id, id, req.body.courseId);
+    }
+
     @Get(':id')
     findOne(@Param('id') id: string, @Req() req: any) {
         return this.listService.findOne(id, req.user.id);

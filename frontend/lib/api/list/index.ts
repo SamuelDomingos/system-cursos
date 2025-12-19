@@ -6,9 +6,20 @@ export const createList = async (dto: CreateListDto): Promise<List> => {
     return result;
 };
 
-export const findAllList = async (
+export const findAll = async (
 ): Promise<List[]> => {
     const result = await http.get<List[]>('/list');
+    return result;
+};
+
+export const findListsAll = async (
+): Promise<List[]> => {
+    const result = await http.get<List[]>('/list/all');
+    return result;
+};
+
+export const addCourseList = async (listId: string, courseId: string): Promise<List> => {
+    const result = await http.post<List>(`/list/add/${listId}`, { courseId });
     return result;
 };
 

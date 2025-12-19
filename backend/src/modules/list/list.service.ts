@@ -5,7 +5,7 @@ import { CreateListDto, UpdateListDto } from './dto/list.dto';
 
 @Injectable()
 export class ListService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createListDto: CreateListDto, userId: string): Promise<List> {
     return this.prisma.list.create({
@@ -22,6 +22,68 @@ export class ListService {
       where: { userId },
       include: { listCourses: { include: { course: true } } },
     });
+  }
+
+  async findListsAll(userId: string): Promise<List[]> {
+    return this.prisma.list.findMany({
+      where: { userId },
+      include: {
+        listCourses: {
+          select: {
+            course: { select: { id: true, title: true } }
+          }
+        }
+      },
+    });
+  }
+
+  async addCourseList(userId: string, id: string, courseId: string): Promise<List> {
+    const list = await this.prisma.list.findFirst({ where: { id, userId } });
+    if (!list) {
+      throw new NotFoundException(`List with ID "${id}" not found for this user.`);
+    }
+
+    const course = await this.prisma.course.findUnique({ where: { id: courseId } });
+    if (!course) {
+      throw new NotFoundException(`Course with ID "${courseId}" not found.`);
+    }
+
+    const existingEntry = await this.prisma.listCourse.findUnique({
+      where: {
+        listId_courseId: {
+          listId: id,
+          courseId: courseId,
+        },
+      },
+    });
+
+    if (existingEntry) {
+      await this.prisma.listCourse.delete({
+        where: {
+          listId_courseId: {
+            listId: id,
+            courseId: courseId,
+          },
+        },
+      });
+    } else {
+      await this.prisma.listCourse.create({
+        data: {
+          listId: id,
+          courseId: courseId,
+        },
+      });
+    }
+
+    const updatedList = await this.prisma.list.findUnique({
+      where: { id },
+      include: { listCourses: { include: { course: { select: { id: true } } } } },
+    });
+
+    if (!updatedList) {
+      throw new NotFoundException(`List with ID "${id}" not found after adding/removing course.`);
+    }
+    return updatedList;
   }
 
   async findOne(id: string, userId: string): Promise<List> {
