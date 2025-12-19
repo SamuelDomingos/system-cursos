@@ -5,11 +5,11 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { UserOwnershipGuard } from 'src/guards/UserOwnership.guard';
 
 @Controller('enrollments')
+@UseGuards(AuthGuard('jwt'), UserOwnershipGuard)
 export class EnrollmentsController {
-  constructor(private readonly enrollmentsService: EnrollmentsService) {}
+  constructor(private readonly enrollmentsService: EnrollmentsService) { }
 
   @Get('user/:id')
-  @UseGuards(AuthGuard('jwt'), UserOwnershipGuard)
   findUserEnrollments(@Param('id') userId: string, @Query() query: PaginationDto) {
     return this.enrollmentsService.findUserEnrollments(userId, query);
   }

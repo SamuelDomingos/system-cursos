@@ -5,7 +5,7 @@ import { useFetchCoursesByUser } from "./_hooks/useAllCourses";
 
 const AllCourses = () => {
   const { user } = useAuth();
-  const { courses, isLoading, error } = useFetchCoursesByUser(user?.id || "");
+  const { courses, isLoading } = useFetchCoursesByUser(user?.id || "");
 
   return (
     <div>

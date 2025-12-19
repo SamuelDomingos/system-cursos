@@ -7,7 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Heart, MoreHorizontal, PlayCircle, Plus, Share2, Star } from "lucide-react";
+import {
+  Heart,
+  MoreHorizontal,
+  PlayCircle,
+  Plus,
+  Share2,
+  Star,
+} from "lucide-react";
 import { CourseSingleUser } from "@/lib/api/types/courses";
 import {
   DropdownMenu,
@@ -19,20 +26,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { useList } from "../_hooks/useList";
+import { useState } from "react";
+import { DialogCreateList } from "./dialogCreateList";
 
 interface SingleCursorAllProps {
   course: CourseSingleUser;
 }
 
-const SingleCursorAll = ({ course }: SingleCursorAllProps) => {;
+const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
+  const { lists } = useList();
   
+  const [open, setOpen] = useState(false);
+
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-  const imageSrc = course.course.thumbnail ? `${API_BASE_URL}${course.course.thumbnail}` : "https://via.placeholder.com/150";
+  const imageSrc = course.course.thumbnail
+    ? `${API_BASE_URL}${course.course.thumbnail}`
+    : "https://via.placeholder.com/150";
 
   return (
     <Card className="group w-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
-        <Link href={`/course/${course.course.id}/learn/${course.course.lastLessonId}`} className="block">
+        <Link
+          href={`/course/${course.course.id}/learn/${course.course.lastLessonId}`}
+          className="block"
+        >
           <Image
             src={imageSrc}
             alt={course.course.title}
@@ -51,17 +69,24 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {;
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end">
+            
             <DropdownMenuLabel>Listas</DropdownMenuLabel>
-
-            <DropdownMenuGroup>
-              <DropdownMenuItem></DropdownMenuItem>
+            <DropdownMenuGroup className="max-h-48 overflow-y-auto">
+              {lists?.map((list) => (
+                <DropdownMenuItem key={list.id}>{list.title}</DropdownMenuItem>
+              ))}
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Plus className="mr-2 h-4 w-4" />
-                Criar nova lista
+                <button
+                  onClick={() => setOpen(true)}
+                  className="flex items-center"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Criar nova lista
+                </button>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Share2 className="mr-2 h-4 w-4" />
@@ -97,8 +122,13 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {;
             <span className="ml-1">Sua classificação</span>
           </div>
         </div>
-        <Progress value={course.userProgress.progressPercentage} className="h-1.5" />
+        <Progress
+          value={course.userProgress.progressPercentage}
+          className="h-1.5"
+        />
       </CardContent>
+
+      {open && <DialogCreateList open={open} setOpen={setOpen} />}
     </Card>
   );
 };

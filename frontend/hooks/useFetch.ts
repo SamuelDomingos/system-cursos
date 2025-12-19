@@ -33,7 +33,7 @@ export const useFetch = <TArgs extends any[], TResult>(
         return result;
       } catch (err: any) {
         setError(err);
-        if (!options?.disableErrorMessage) { // Verifica se a mensagem de erro não está desabilitada
+        if (!options?.disableErrorMessage) {
           toast.error(options?.errorMessage || "Erro ao realizar a operação.", {
             description: err.message || "Tente novamente mais tarde.",
           });

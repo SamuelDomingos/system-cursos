@@ -83,7 +83,7 @@ export default function WeeklyProgressCard() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="flex items-start gap-2">
-                  <span className="h-3 w-3 mt-1 rounded-full bg-orange-400 flex-shrink-0"></span>
+                  <span className="h-3 w-3 mt-1 rounded-full bg-orange-400 shrink-0"></span>
                   <div>
                     <p className="font-semibold">
                       Para concluir o círculo de visualizações
@@ -92,7 +92,7 @@ export default function WeeklyProgressCard() {
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="h-3 w-3 mt-1 rounded-full bg-green-500 flex-shrink-0"></span>
+                  <span className="h-3 w-3 mt-1 rounded-full bg-green-500 shrink-0"></span>
                   <div>
                     <p className="font-semibold">
                       Para concluir o círculo de acessos

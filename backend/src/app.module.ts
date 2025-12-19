@@ -27,11 +27,11 @@ import { ListModule } from './modules/list/list.module';
   imports: [CoursesModule, AuthModule, UsersModule, ConfigModule.forRoot(), PrismaModule, MulterModule.register({
     dest: './uploads',
   }),
-  ServeStaticModule.forRoot({
-    rootPath: join(__dirname, '..', '..', 'uploads'),
-    serveRoot: '/uploads',
-  }),
-  FriendshipModule, TopicModule, StripeModule, ListModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
+    FriendshipModule, TopicModule, StripeModule, ListModule,
   ],
   controllers: [ModulesController, LessonsController, EnrollmentsController, FriendshipController, ListController],
   providers: [ModulesService, LessonsService, EnrollmentsService, ProgressService, FriendshipService, ListService],
