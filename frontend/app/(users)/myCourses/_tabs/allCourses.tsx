@@ -5,6 +5,7 @@ import { useFetchCoursesByUser } from "./_hooks/useAllCourses";
 
 const AllCourses = () => {
   const { user } = useAuth();
+  
   const { courses, isLoading } = useFetchCoursesByUser(user?.id || "");
 
   return (
@@ -14,7 +15,7 @@ const AllCourses = () => {
       <h2 className="text-2xl font-bold mb-6 mt-8">Todos os cursos</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
         {courses?.data?.map((item) => (
-          <SingleCursorAll key={item.course.id} course={item} />
+          <SingleCursorAll key={item.course.id} course={item.course} progressPercentage={item.userProgress.progressPercentage} />
         ))}
       </div>
     </div>

@@ -6,6 +6,7 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import AuthGuard from "@/contexts/AuthGuard";
 import { ThemeProvider } from "next-themes";
+import { LayoutWrapper } from "@/components/header/layout-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,9 @@ export default function RootLayout({
           <Toaster position="top-center" richColors={true} />
           <CartProvider>
             <AuthProvider>
-              <AuthGuard protectedRoutes={["/home"]}>{children}</AuthGuard>
+                <LayoutWrapper>
+                  <AuthGuard protectedRoutes={["/"]}>{children}</AuthGuard>
+                </LayoutWrapper>
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>

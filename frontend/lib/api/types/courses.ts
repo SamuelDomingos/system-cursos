@@ -11,16 +11,6 @@ export type Course = {
   lastLessonId: string;
 };
 
-export type CourseSingleUser = {
-  course: Course;
-  userProgress: {
-    totalLessons: number;
-    completedLessons: number;
-    progressPercentage: number;
-    totalWatchTime: number;
-  };
-}
-
 export type CreateCourseDto = {
   title: string;
   description: string;

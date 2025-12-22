@@ -16,7 +16,7 @@ const AuthGuard = ({ children, protectedRoutes }: { children: React.ReactNode, p
       if (isProtectedRoute && !isAuthenticated) {
         router.push('/auth');
       } else if (!isProtectedRoute && isAuthenticated && currentPath === '/auth') {
-        router.push('/home');
+        router.push('/');
       }
     }
   }, [isAuthenticated, isLoading, router, protectedRoutes]);

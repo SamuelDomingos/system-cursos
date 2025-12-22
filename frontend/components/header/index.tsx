@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -20,7 +19,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import CartDropdownContent from "./CartDropdownContent";
+import CartDropdownContent from "../CartDropdownContent";
 import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
@@ -28,7 +27,6 @@ import { useState, useEffect } from "react";
 export const Header = () => {
   const { logout } = useAuth();
   const { cartCount } = useCart();
-  const router = useRouter();
   const [hasBackground, setHasBackground] = useState(false);
 
   useEffect(() => {
@@ -47,11 +45,6 @@ export const Header = () => {
     };
   }, []);
 
-  const handleLogout = async () => {
-    await logout();
-    router.push("/auth");
-  };
-
   return (
     <header
       className={`sticky top-0 z-30 flex h-20 items-center gap-4 border-b py-2 sm:h-auto sm:border-0 sm:px-8 transition-all duration-300 ${
@@ -62,7 +55,7 @@ export const Header = () => {
     >
       <div className="flex items-center gap-2">
         <Link
-          href="/home"
+          href="/"
           className="flex items-center justify-center cursor-pointer"
         >
           <Button variant="secondary" size="icon" className="h-8 w-8">
@@ -136,7 +129,9 @@ export const Header = () => {
             <Separator className="my-1" />
             <Button
               variant="ghost"
-              onClick={handleLogout}
+              onClick={async () => {
+                await logout();
+              }}
               className="w-full justify-start flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground"
             >
               <LogOut className="mr-2 h-4 w-4" />

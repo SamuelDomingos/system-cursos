@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LoginRequest, RegisterRequest } from '@/lib/api/types/auth';
 import { User } from '@/lib/api/types/users';
-import { login as apiLogin, register as apiRegister, logout as apiLogout } from '@/lib/api/auth/auth';
+import { login as apiLogin, register as apiRegister } from '@/lib/api/auth/auth';
 import { cookies } from '@/utils/cookies';
 
 interface AuthContextType {
@@ -60,14 +60,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    try {
-      await apiLogout();
-    } finally {
       setIsAuthenticated(false);
       setUser(null);
       cookies.remove('token');
       cookies.remove('user');
-    }
   };
 
   return (

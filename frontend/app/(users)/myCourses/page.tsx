@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AllCourses from "./_tabs/allCourses";
+import TabLists from "./_tabs/tabLists";
 
 export default function MyLearningPage() {
   return (
@@ -21,6 +22,10 @@ export default function MyLearningPage() {
         <TabsContent value="all">
           <AllCourses />
         </TabsContent>
+         <TabsContent value="lists">
+          <TabLists />
+        </TabsContent>
+        
       </Tabs>
     </div>
   );

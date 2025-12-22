@@ -21,9 +21,14 @@ export class AuthService {
   async login(user: any) {
     const payload = { email: user.email, sub: user.id };
     const { password, role, ...result } = user;
+
+    const token = this.jwtService.sign(payload);
+    const decodedToken = this.jwtService.decode(token) as any;
+
     return {
       ...result,
       access_token: this.jwtService.sign(payload),
+      expires_at: new Date(decodedToken.exp * 1000).toISOString(),
     };
   }
 
@@ -31,9 +36,14 @@ export class AuthService {
     const user = await this.usersService.create(body.email, body.name, body.password);
     const payload = { email: user.email, sub: user.id };
     const { password, role, ...result } = user;
+
+    const token = this.jwtService.sign(payload);
+    const decodedToken = this.jwtService.decode(token) as any;
+
     return {
       ...result,
       access_token: this.jwtService.sign(payload),
+      expires_at: new Date(decodedToken.exp * 1000).toISOString(),
     };
   }
 }

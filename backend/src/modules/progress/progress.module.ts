@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ProgressService } from './progress.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaModule } from '../prisma/prisma.module';
+import { LessonsModule } from '../lessons/lessons.module';
 
 @Module({
-  providers: [ProgressService, PrismaService],
+  imports: [PrismaModule, LessonsModule],
+  providers: [ProgressService],
+  exports: [ProgressModule]
 })
 export class ProgressModule {}

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Trash2, Heart, Bookmark } from "lucide-react";
-import { useCartProcess } from "@/app/(users)/cart/_hooks/useCartProcess";
+import { useCartProcess } from "@/app/cart/_hooks/useCartProcess";
 
 export default function CartPage() {
   const { cartItems, cartTotal, removeItemFromCart } = useCart();

@@ -16,7 +16,7 @@ import {
   Share2,
   Star,
 } from "lucide-react";
-import { CourseSingleUser } from "@/lib/api/types/courses";
+import { Course } from "@/lib/api/types/courses";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,29 +33,30 @@ import { DialogCreateList } from "./dialogCreateList";
 import { cn } from "@/lib/utils";
 
 interface SingleCursorAllProps {
-  course: CourseSingleUser;
+  course: Course;
+  progressPercentage: number
 }
 
-const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
+const SingleCursorAll = ({ course, progressPercentage }: SingleCursorAllProps) => {
   const { lists, addCourseMutation } = useList();
 
   const [open, setOpen] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-  const imageSrc = course.course.thumbnail
-    ? `${API_BASE_URL}${course.course.thumbnail}`
+  const imageSrc = course.thumbnail
+    ? `${API_BASE_URL}${course.thumbnail}`
     : "https://via.placeholder.com/150";
 
   return (
     <Card className="group w-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
         <Link
-          href={`/course/${course.course.id}/learn/${course.course.lastLessonId}`}
+          href={`/course/${course.id}/learn/${course.lastLessonId}`}
           className="block"
         >
           <Image
             src={imageSrc}
-            alt={course.course.title}
+            alt={course.title}
             width={400}
             height={225}
             className="w-full object-cover"
@@ -74,14 +75,14 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
             <DropdownMenuLabel>Listas</DropdownMenuLabel>
             <DropdownMenuGroup className="max-h-48 overflow-y-auto">
               {lists?.map((list) => {
-                const isInList = list.listCourses?.some((c) => c.course.id === course.course.id);
+                const isInList = list.listCourses?.some((c) => c.course.id === course.id);
                 return (
                   <DropdownMenuItem
                     key={list.id}
                     onClick={() =>
                       addCourseMutation.mutate({
                         listId: list.id!,
-                        courseId: course.course.id!,
+                        courseId: course.id!,
                       })
                     }
                     className={cn(
@@ -121,15 +122,15 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
       </div>
       <CardHeader className="p-4 pb-2">
         <CardTitle className="text-base font-semibold leading-tight">
-          {course.course.title}
+          {course.title}
         </CardTitle>
         <CardDescription className="text-xs text-gray-600 mt-1">
-          {course.course.instructor.name}
+          {course.instructor.name}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4 py-2 pt-0">
         <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-          <span>{course.userProgress.progressPercentage}% concluído</span>
+          <span>{progressPercentage}% concluído</span>
           <div className="flex items-center">
             {[...Array(4)].map((_, i) => (
               <Star
@@ -142,7 +143,7 @@ const SingleCursorAll = ({ course }: SingleCursorAllProps) => {
           </div>
         </div>
         <Progress
-          value={course.userProgress.progressPercentage}
+          value={progressPercentage}
           className="h-1.5"
         />
       </CardContent>

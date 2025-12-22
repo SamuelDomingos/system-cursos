@@ -1,5 +1,5 @@
 import http from '@/utils/http';
-import { CreateListDto, List, UpdateListDto } from '../types/list';
+import { CreateListDto, List, ListAll, UpdateListDto } from '../types/list';
 
 export const createList = async (dto: CreateListDto): Promise<List> => {
     const result = await http.post<List>('/list', dto);
@@ -7,8 +7,8 @@ export const createList = async (dto: CreateListDto): Promise<List> => {
 };
 
 export const findAll = async (
-): Promise<List[]> => {
-    const result = await http.get<List[]>('/list');
+): Promise<ListAll[]> => {
+    const result = await http.get<ListAll[]>('/list');
     return result;
 };
 

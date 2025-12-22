@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { List, ListType } from '@prisma/client';
 import { CreateListDto, UpdateListDto } from './dto/list.dto';
+import { ProgressService } from '../progress/progress.service';
 
 @Injectable()
 export class ListService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService, private ProgressService: ProgressService) { }
 
   async create(createListDto: CreateListDto, userId: string): Promise<List> {
     return this.prisma.list.create({
@@ -18,10 +19,46 @@ export class ListService {
   }
 
   async findAll(userId: string): Promise<List[]> {
-    return this.prisma.list.findMany({
+    const lists = await this.prisma.list.findMany({
       where: { userId },
-      include: { listCourses: { include: { course: true } } },
+      include: {
+        listCourses: {
+          include: {
+            course: {
+              include: {
+                instructor: { select: { id: true, name: true, avatar: true } },
+              },
+            },
+          },
+        },
+      },
     });
+
+    const courseIds = lists.flatMap(list => list.listCourses.map(lc => lc.courseId));
+    const enrollments = await this.prisma.enrollment.findMany({
+      where: { userId, courseId: { in: courseIds } },
+      include: { course: true },
+    });
+
+    const progress = await this.ProgressService._buildUserCourseProgress(userId, enrollments);
+    return lists.map(list => ({
+      ...list,
+      listCourses: list.listCourses.map(lc => {
+        const courseProgress = progress.find(p => p.course.id === lc.courseId);
+        return {
+          course: {
+            ...lc.course,
+          },
+          userProgress: courseProgress
+            ? {
+              completedLessons: courseProgress.userProgress.completedLessons,
+              totalLessons: courseProgress.userProgress.totalLessons,
+              progressPercentage: courseProgress.userProgress.progressPercentage,
+            }
+            : { completedLessons: 0, totalLessons: 0, progressPercentage: 0 },
+        };
+      }),
+    }));
   }
 
   async findListsAll(userId: string): Promise<List[]> {

@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ListService } from './list.service';
 import { ListController } from './list.controller';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaModule } from '../prisma/prisma.module';
+import { ProgressService } from '../progress/progress.service';
+import { LessonsModule } from '../lessons/lessons.module';
 
 @Module({
+  imports: [PrismaModule, LessonsModule],
   controllers: [ListController],
-  providers: [ListService, PrismaService],
+  providers: [ListService, ProgressService],
 })
-export class ListModule {}
+
+export class ListModule { }

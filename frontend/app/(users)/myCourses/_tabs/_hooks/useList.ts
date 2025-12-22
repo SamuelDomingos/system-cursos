@@ -1,6 +1,6 @@
 import { useFetch } from "@/hooks/useFetch";
 import { useMutation } from "@/hooks/useMutation";
-import { addCourseList, createList, findListsAll, updateList } from "@/lib/api/list";
+import { addCourseList, createList, findAll, findListsAll, updateList } from "@/lib/api/list";
 import { List } from "@/lib/api/types/list";
 import { useMemo } from "react";
 
@@ -13,6 +13,16 @@ export const useList = (userId?: string, listId?: string) => {
         isLoading: isFetching,
         execute: refetch
     } = useFetch(findListsAll, {
+        auto: true,
+        defaultArgs,
+        disableErrorMessage: true,
+    });
+
+    const {
+        data: allLists,
+        isLoading: isFetchingAll,
+        execute: refetchAll
+    } = useFetch(findAll, {
         auto: true,
         defaultArgs,
         disableErrorMessage: true,
@@ -55,6 +65,10 @@ export const useList = (userId?: string, listId?: string) => {
         lists,
         refetch,
 
-        addCourseMutation
+        addCourseMutation,
+
+        allLists,
+        isFetchingAll,
+        refetchAll
     };
 };

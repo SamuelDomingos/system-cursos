@@ -2,13 +2,13 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEnrollmentDto } from './dto/enrollment.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { LessonsService } from '../lessons/lessons.service';
+import { ProgressService } from '../progress/progress.service';
 
 @Injectable()
 export class EnrollmentsService {
   constructor(
     private prisma: PrismaService,
-    private lessonsService: LessonsService
+    private ProgressService: ProgressService
   ) { }
 
   async _create(dto: CreateEnrollmentDto) {
@@ -52,37 +52,7 @@ export class EnrollmentsService {
 
     if (!enrollments.length) throw new NotFoundException('Nenhum curso matriculado para este usuário');
 
-    const withProgress = await Promise.all(
-      enrollments.map(async (enrollment) => {
-        const course = enrollment.course;
-
-        const totalLessons = await this.prisma.lesson.count({
-          where: { module: { courseId: course.id } },
-        });
-
-        const completedLessons = await this.prisma.progress.count({
-          where: { userId, lesson: { module: { courseId: course.id } }, completed: true },
-        });
-
-        const totalWatchTime = await this.prisma.progress.aggregate({
-          where: { userId, lesson: { module: { courseId: course.id } } },
-          _sum: { watchTime: true },
-        });
-
-        const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-        const lastLessonId = await this.lessonsService._findLastUserLessonId(userId, course.id);
-
-        return {
-          course: {lastLessonId, ...course},
-          userProgress: {
-            totalLessons,
-            completedLessons,
-            progressPercentage,
-            totalWatchTime: totalWatchTime._sum.watchTime || 0,
-          },
-        };
-      })
-    );
+    const withProgress = await this.ProgressService._buildUserCourseProgress(userId, enrollments);
 
     return {
       data: withProgress,
